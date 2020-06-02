@@ -108,8 +108,7 @@ Modules/repos:
 
 - `sizechecker`: main one
 - `github-pr-comment`: add or update a PR comment as bot
-- `github-branch-compare`: help checkout
-  1. if local: feature branch and  
+- `github-branch-compare`: help checkout TODO
 
 ### Output
 

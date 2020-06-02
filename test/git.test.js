@@ -17,7 +17,6 @@ const git = require("../lib/git");
 describe("git", function() {
 
     it("checks out 2 folders", function() {
-        //process.chdir("");
-        git.checkout();
+        //git.checkout();
     });
 });
