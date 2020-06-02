@@ -1,3 +1,5 @@
+🚧 Under development 🚧
+
 # sizechecker
 
 CI tool to warn about size increases in github PRs. Will check:
@@ -6,16 +8,31 @@ CI tool to warn about size increases in github PRs. Will check:
 - `git` repo increases
 - ... more possible in the future, other languages...
 
-Run using:
+## Usage
+
+Run in CIs in context of PRs using:
 
 ```
-sizechecker
+npx @adobe/sizechecker
 ```
 
-Can also compare 2 existing folders:
+Can also be run locally. To install:
+
+- install globally using `npm install -g @adobe/sizechecker` and run as `sizechecker`
+- alternatively add as dev dependency to your project using `npm install --save-dev @adobe/sizechecker` and run using `npx @adobe/sizechecker` (adjust examples below)
+
+By default will compare current branch ("new") against `master` ("before").
+
+To compare current branch with another base branch `base`:
 
 ```
-sizechecker before/ after/
+sizechecker base
+```
+
+To compare arbitrary branches or revisions `before` with `after`:
+
+```
+sizechecker before after
 ```
 
 ## Supported CIs
