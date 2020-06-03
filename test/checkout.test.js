@@ -12,11 +12,11 @@
 
 'use strict';
 
-const git = require("../lib/git");
+// const {checkout} = require("../lib/checkout");
 
-describe("git", function() {
+describe("checkout", function() {
 
     it("checks out 2 folders", function() {
-        //git.checkout();
+        //checkout(...);
     });
 });

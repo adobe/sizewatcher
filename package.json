@@ -9,7 +9,8 @@
   "scripts": {
     "test": "nyc mocha",
     "posttest": "eslint .",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "sizechecker": "node ./index.js"
   },
   "author": "Adobe",
   "license": "Apache-2.0",

@@ -60,7 +60,7 @@ async function runCheckers(beforeDir, afterDir, beforeBranch, afterBranch) {
 
 async function handleResults(results) {
     for (const result of results) {
-        result.percentIncrease = ((result.afterSize - result.beforeSize) / result.beforeSize * 100).toFixed(2);
+        result.percentIncrease = ((result.afterSize - result.beforeSize) / result.beforeSize * 100).toFixed(1);
 
         const sign = (result.afterSize > result.beforeSize) ? "+" : "";
 
@@ -72,22 +72,27 @@ async function handleResults(results) {
 }
 
 async function main(argv) {
-    // yes, this should probably use a framework like oclif or yargs.
-    // but cli arguments are very limited now and so manual handling is enough
-    if (argv[0] === "-h") {
-        printUsage();
+    try {
+        // yes, this should probably use a framework like oclif or yargs.
+        // but cli arguments are very limited now and so manual handling is enough
+        if (argv[0] === "-h") {
+            printUsage();
+            process.exit(1);
+        }
+
+        const afterBranch = await getAfterBranch(argv);
+        const beforeBranch = await getBeforeBranch(argv);
+        console.log(`comparing from ${beforeBranch} to ${afterBranch}`);
+
+        const { beforeDir, afterDir } = await checkout(process.cwd(), beforeBranch, afterBranch);
+
+        const results = await runCheckers(beforeDir, afterDir, beforeBranch, afterBranch);
+
+        await handleResults(results);
+    } catch (e) {
+        console.error(e);
         process.exit(1);
     }
-
-    const afterBranch = await getAfterBranch(argv);
-    const beforeBranch = await getBeforeBranch(argv);
-    console.log(`comparing from ${beforeBranch} to ${afterBranch}`);
-
-    const { beforeDir, afterDir } = await checkout(process.cwd(), beforeBranch, afterBranch);
-
-    const results = await runCheckers(beforeDir, afterDir, beforeBranch, afterBranch);
-
-    await handleResults(results);
 }
 
 main(process.argv.slice(2));
