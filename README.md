@@ -161,3 +161,11 @@ sizechecker (aggregated GOOD/OK/BAD icon)
 - [npm get-folder-size](https://www.npmjs.com/package/get-folder-size)
 - [octokit/rest](https://github.com/octokit/rest.js/)
     - [api docs](https://octokit.github.io/rest.js/v17)
+
+## Contributing
+
+Contributions are welcomed! Read the [Contributing Guide](./.github/CONTRIBUTING.md) for more information.
+
+## Licensing
+
+This project is licensed under the Apache V2 License. See [LICENSE](LICENSE) for more information.
