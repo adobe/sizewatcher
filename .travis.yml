@@ -18,9 +18,9 @@ install:
   - npm version
   - npm install
 
-script: npm test
-
-after_script:
+script:
+  - npm test
+  - git remote -v
   - npm run sizechecker
 
 after_success:

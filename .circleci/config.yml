@@ -28,5 +28,4 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run: npm test
-      - run: git remote -v
       - run: npm run sizechecker
