@@ -20,5 +20,8 @@ install:
 
 script: npm test
 
+after_script:
+  - npm run sizechecker
+
 after_success:
   - npm run report-coverage
