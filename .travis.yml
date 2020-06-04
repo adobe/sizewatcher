@@ -20,9 +20,7 @@ install:
 
 script:
   - npm test
-  - git remote -v
-  - git rev-parse --abbrev-ref HEAD
-  - DEBUG=sizechecker* npm run sizechecker
+  - DEBUG=sizechecker*,simple-git npm run sizechecker
 
 after_success:
   - npm run report-coverage
