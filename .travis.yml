@@ -21,6 +21,7 @@ install:
 script:
   - npm test
   - git remote -v
+  - git rev-parse --abbrev-ref HEAD
   - DEBUG=sizechecker* npm run sizechecker
 
 after_success:
