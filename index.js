@@ -30,7 +30,7 @@ function printUsage() {
 }
 
 async function getAfterBranch(argv) {
-    return argv[1] || currentBranch(process.cwd());
+    return argv[1] || process.env.TRAVIS_BRANCH || process.env.CIRCLE_BRANCH || currentBranch(process.cwd());
 }
 
 async function getBeforeBranch(argv) {

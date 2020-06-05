@@ -18,7 +18,9 @@ install:
   - npm version
   - npm install
 
-script: npm test
+script:
+  - npm test
+  - npm run sizechecker
 
 after_success:
   - npm run report-coverage
