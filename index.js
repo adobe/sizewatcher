@@ -14,7 +14,7 @@
 
 'use strict';
 
-const { checkout, currentBranch } = require("./lib/checkout");
+const { checkoutBranches, currentBranch } = require("./lib/checkout");
 const CHECKERS = require('require-dir')("./lib/checkers");
 const prettyBytes = require('pretty-bytes');
 
@@ -69,6 +69,8 @@ async function handleResults(results) {
     console.log(results);
 
     // TODO: report as PR comment
+    // TODO: threshold / aggregation logic
+    // TODO: report as status check
 }
 
 async function main(argv) {
@@ -84,7 +86,7 @@ async function main(argv) {
         const beforeBranch = await getBeforeBranch(argv);
         console.log(`comparing from ${beforeBranch} to ${afterBranch}`);
 
-        const { beforeDir, afterDir } = await checkout(process.cwd(), beforeBranch, afterBranch);
+        const { beforeDir, afterDir } = await checkoutBranches(process.cwd(), beforeBranch, afterBranch);
 
         const results = await runCheckers(beforeDir, afterDir, beforeBranch, afterBranch);
 
@@ -94,5 +96,9 @@ async function main(argv) {
         process.exit(1);
     }
 }
+
+// TODO: detect master = master case
+// TODO: cleanup checkout
+// TODO: checkout unit tests (travis, circleci, local)
 
 main(process.argv.slice(2));
