@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -x
+
 # checkout like github actions
 
 cd build

@@ -20,17 +20,13 @@ const assert = require("assert");
 const Git = require("simple-git/promise");
 
 function exec(dir, command) {
-    return execSync(command, {cwd: dir, stdio: 'pipe'}).toString().trim();
-}
-
-function lastLine(str) {
-    return str.substring(str.lastIndexOf("\n") + 1);
+    execSync(command, {cwd: dir, stdio: 'inherit'});
 }
 
 async function run(dir) {
     // prepare
-    const out = exec(dir, "../setup.sh");
-    const commitSha = lastLine(out);
+    exec(dir, "../setup.sh");
+    const commitSha = fs.readFileSync(path.join(dir, "build", "commit.hash")).toString().trim();
     exec(dir, `./checkout.sh ${commitSha}`);
     const checkoutDir = path.join(dir, path.normalize("build/checkout"));
 

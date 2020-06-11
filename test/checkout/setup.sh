@@ -14,4 +14,6 @@ git commit -a -m "initial commit"
 git checkout -b branch 2> /dev/null
 echo "hello world" > file
 git commit -a -m "branch commit"
-git rev-parse HEAD
+
+# need the commit hash in the js code, and it's different each run
+git rev-parse HEAD > ../commit.hash
