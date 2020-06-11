@@ -82,8 +82,8 @@ async function main(argv) {
             process.exit(1);
         }
 
-        const afterBranch = await getAfterBranch(argv);
         const beforeBranch = await getBeforeBranch(argv);
+        const afterBranch = await getAfterBranch(argv);
         console.log(`comparing from ${beforeBranch} to ${afterBranch}`);
 
         const { beforeDir, afterDir } = await checkoutBranches(process.cwd(), beforeBranch, afterBranch);

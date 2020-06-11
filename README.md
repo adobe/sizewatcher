@@ -135,9 +135,12 @@ sizechecker (aggregated GOOD/OK/BAD icon)
 > `node_modules` increased 50% / 50 MB from 100 MB to 150 MB (green/orange/red)
   <table of largest modules>
 
-> `git repo` increased 
+> `git repo` increased
 
 ```
+
+Github status checks:
+- one for each checker with result in custom message
 
 ### Icons/colors
 
@@ -157,6 +160,7 @@ sizechecker (aggregated GOOD/OK/BAD icon)
 
 - [Travis Environment Variables](https://docs.travis-ci.com/user/environment-variables/#default-environment-variables)
 - [CircleCI Environment Variables](https://circleci.com/docs/2.0/env-vars/#built-in-environment-variables)
+- [Github Actions Environment Variables](https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables)
 - [npm du](https://www.npmjs.com/package/du)
 - [npm get-folder-size](https://www.npmjs.com/package/get-folder-size)
 - [octokit/rest](https://github.com/octokit/rest.js/)
