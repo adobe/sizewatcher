@@ -20,7 +20,7 @@ install:
 
 script:
   - npm test
-  - npm run sizechecker
+  - npm run sizewatcher
 
 after_success:
   - npm run report-coverage

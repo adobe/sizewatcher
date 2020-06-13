@@ -1,6 +1,6 @@
 🚧 Under development 🚧
 
-# sizechecker
+# sizewatcher
 
 CI tool to warn about size increases in github PRs. Will check:
 
@@ -13,26 +13,26 @@ CI tool to warn about size increases in github PRs. Will check:
 Run in CIs in context of PRs using:
 
 ```
-npx @adobe/sizechecker
+npx @adobe/sizewatcher
 ```
 
 Can also be run locally. To install:
 
-- install globally using `npm install -g @adobe/sizechecker` and run as `sizechecker`
-- alternatively add as dev dependency to your project using `npm install --save-dev @adobe/sizechecker` and run using `npx @adobe/sizechecker` (adjust examples below)
+- install globally using `npm install -g @adobe/sizewatcher` and run as `sizewatcher`
+- alternatively add as dev dependency to your project using `npm install --save-dev @adobe/sizewatcher` and run using `npx @adobe/sizewatcher` (adjust examples below)
 
 By default will compare current branch ("new") against `master` ("before").
 
 To compare current branch with another base branch `base`:
 
 ```
-sizechecker base
+sizewatcher base
 ```
 
 To compare arbitrary branches or revisions `before` with `after`:
 
 ```
-sizechecker before after
+sizewatcher before after
 ```
 
 ## Supported CIs
@@ -43,14 +43,14 @@ sizechecker before after
 
 ## Requirements
 
-**Try to avoid any config. Default `sizechecker` in CI should be enough!**
+**Try to avoid any config. Default `sizewatcher` in CI should be enough!**
  
 - nodejs version 12+
 - `GITHUB_TOKEN` for checkout (in case not possible in CI)
 
 ## Config
 
-- `.sizechecker` yaml config file
+- `.sizewatcher` yaml config file
 - thresholds for warning icons/colors
 - what checkers to run (auto identify by default)
 - custom checker
@@ -84,7 +84,7 @@ checkers:
 
 ### generic checker
 
-Could be reused by other checkers, or manually configured in `.sizechecker` (but wait for some use cases for finding the right abstraction; e.g. maven dependencies aren't in a single folder).
+Could be reused by other checkers, or manually configured in `.sizewatcher` (but wait for some use cases for finding the right abstraction; e.g. maven dependencies aren't in a single folder).
 
 - specify name
 - specify directory to measure, with exclusions
@@ -123,14 +123,14 @@ Could be reused by other checkers, or manually configured in `.sizechecker` (but
 
 Modules/repos:
 
-- `sizechecker`: main one
+- `sizewatcher`: main one
 - `github-pr-comment`: add or update a PR comment as bot
 - `github-branch-compare`: help checkout TODO
 
 ### Output
 
 ```
-sizechecker (aggregated GOOD/OK/BAD icon)
+sizewatcher (aggregated GOOD/OK/BAD icon)
 
 > `node_modules` increased 50% / 50 MB from 100 MB to 150 MB (green/orange/red)
   <table of largest modules>

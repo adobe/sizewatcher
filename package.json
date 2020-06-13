@@ -1,16 +1,16 @@
 {
-  "name": "@adobe/sizechecker",
+  "name": "@adobe/sizewatcher",
   "version": "1.0.0",
   "description": "Warns if your PRs increase your projects footprint.",
   "main": "index.js",
   "bin": {
-    "sizechecker": "./index.js"
+    "sizewatcher": "./index.js"
   },
   "scripts": {
     "test": "nyc -r=text -r=lcov mocha",
     "posttest": "eslint .",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "sizechecker": "node ./index.js main"
+    "sizewatcher": "node ./index.js main"
   },
   "author": "Adobe",
   "license": "Apache-2.0",
