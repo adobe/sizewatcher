@@ -12,11 +12,60 @@
 
 'use strict';
 
-// const {checkout} = require("../lib/checkout");
+const { checkoutBranches, currentBranch } = require("../lib/checkout");
+const { execSync } = require("child_process");
+const path = require("path");
+const fs = require("fs");
+const assert = require("assert");
+const Git = require("simple-git/promise");
+
+function exec(dir, command) {
+    execSync(command, {cwd: dir, stdio: 'inherit'});
+}
+
+async function run(dir) {
+    // prepare
+    exec(dir, "../setup.sh");
+    const commitSha = fs.readFileSync(path.join(dir, "build", "commit.hash")).toString().trim();
+    exec(dir, `./checkout.sh ${commitSha}`);
+    const checkoutDir = path.join(dir, path.normalize("build/checkout"));
+
+    // test checkout logic
+    const current = await currentBranch(checkoutDir);
+    const { beforeDir, afterDir } = await checkoutBranches(checkoutDir, "master", current);
+
+    // assert
+    assert.notEqual(beforeDir, afterDir);
+    assert(fs.existsSync(beforeDir));
+    assert(fs.existsSync(afterDir));
+    assert.equal(await Git(beforeDir).revparse(["--abbrev-ref", "HEAD"]), "master");
+    assert.equal(await Git(afterDir).revparse(["HEAD"]), commitSha);
+}
 
 describe("checkout", function() {
 
-    it("checks out 2 folders", function() {
-        //checkout(...);
+    beforeEach(function() {
+        delete process.env.GITHUB_ACTIONS;
+        delete process.env.TRAVIS;
+        delete process.env.CIRCLECI;
+    });
+
+    it("handles normal checkouts", async function() {
+        await run("test/checkout/normal");
+    });
+
+    it("handles travis checkouts", async function() {
+        process.env.TRAVIS = true;
+        await run("test/checkout/travis");
+    });
+
+    it("handles circleci checkouts", async function() {
+        process.env.CIRCLECI = true;
+        await run("test/checkout/circleci");
+    });
+
+    it("handles github action checkouts", async function() {
+        process.env.GITHUB_ACTIONS = true;
+        await run("test/checkout/githubactions");
     });
 });

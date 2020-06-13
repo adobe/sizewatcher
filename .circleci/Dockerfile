@@ -8,25 +8,24 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 
-version: 2
+# custom docker image with newer git (> 2.18) required for github actions test
 
-jobs:
-  build:
-    docker:
-      # custom docker image with newer git (> 2.18) required for github actions test
-      - image: alexkli/circleci-node12
-    steps:
-      - checkout
+FROM circleci/node:12
 
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run: npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+WORKDIR /home/circleci
 
-      - run: npm test
-      - run: npm run sizechecker
+RUN sudo apt install build-essential make libssl-dev libghc-zlib-dev libcurl4-gnutls-dev libexpat1-dev gettext unzip
+
+# download git sources
+RUN wget https://github.com/git/git/archive/v2.25.0.zip -O git.zip && \
+    unzip git.zip
+
+# compile git
+RUN cd git-2.25.0 && \
+    make prefix=/usr/local all && \
+    sudo make prefix=/usr/local install
+
+###################################################
+FROM circleci/node:12
+
+COPY --from=0 /usr/local/bin/git /usr/local/bin/git
