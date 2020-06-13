@@ -32,13 +32,13 @@ async function run(dir) {
 
     // test checkout logic
     const current = await currentBranch(checkoutDir);
-    const { beforeDir, afterDir } = await checkoutBranches(checkoutDir, "master", current);
+    const { beforeDir, afterDir } = await checkoutBranches(checkoutDir, "main", current);
 
     // assert
     assert.notEqual(beforeDir, afterDir);
     assert(fs.existsSync(beforeDir));
     assert(fs.existsSync(afterDir));
-    assert.equal(await Git(beforeDir).revparse(["--abbrev-ref", "HEAD"]), "master");
+    assert.equal(await Git(beforeDir).revparse(["--abbrev-ref", "HEAD"]), "main");
     assert.equal(await Git(afterDir).revparse(["HEAD"]), commitSha);
 }
 

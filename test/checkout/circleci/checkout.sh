@@ -9,7 +9,7 @@ cd checkout
 
 # note: this tries to simulate a git clone with a remote transport
 # using the local directory cloning
-git clone -b master --no-hardlinks $remote .
+git clone -b main --no-hardlinks $remote .
 
 git config --local gc.auto 0
 git fetch --force origin "branch:remotes/origin/branch"
