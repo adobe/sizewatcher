@@ -34,6 +34,10 @@ async function getAfterBranch(argv) {
 }
 
 async function getBeforeBranch(argv) {
+    // TODO: detect default branch:
+    //       - makes request:
+    //           git remote show origin | grep "HEAD branch" | cut -d ":" -f 2
+    //       - go through list of candidates, main, trunk, master...
     const beforeBranch = argv[0] || "master";
 
     // TODO: detect if CI environment to parse PR info
@@ -97,7 +101,7 @@ async function main(argv) {
     }
 }
 
-// TODO: detect master = master case
+// TODO: detect main = main case
 // TODO: cleanup checkout
 // TODO: checkout unit tests (travis, circleci, local)
 

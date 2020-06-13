@@ -7,10 +7,10 @@
     "sizechecker": "./index.js"
   },
   "scripts": {
-    "test": "nyc mocha",
+    "test": "nyc -r=text -r=lcov mocha",
     "posttest": "eslint .",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "sizechecker": "node ./index.js"
+    "sizechecker": "node ./index.js main"
   },
   "author": "Adobe",
   "license": "Apache-2.0",
