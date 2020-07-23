@@ -12,7 +12,7 @@
 
 'use strict';
 
-const { checkoutBranches, currentBranch } = require("../lib/checkout");
+const gitCheckoutBeforeAndAfter = require("../lib/checkout");
 const { execSync } = require("child_process");
 const path = require("path");
 const fs = require("fs");
@@ -31,8 +31,7 @@ async function run(dir) {
     const checkoutDir = path.join(dir, path.normalize("build/checkout"));
 
     // test checkout logic
-    const current = await currentBranch(checkoutDir);
-    const { beforeDir, afterDir } = await checkoutBranches(checkoutDir, "main", current);
+    const { beforeDir, afterDir } = await gitCheckoutBeforeAndAfter(checkoutDir, "main");
 
     // assert
     assert.notEqual(beforeDir, afterDir);

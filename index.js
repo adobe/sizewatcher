@@ -14,7 +14,7 @@
 
 'use strict';
 
-const { checkoutBranches, currentBranch } = require("./lib/checkout");
+const gitCheckoutBeforeAndAfter = require("./lib/checkout");
 const CHECKERS = require('require-dir')("./lib/checkers");
 const prettyBytes = require('pretty-bytes');
 
@@ -27,23 +27,6 @@ function printUsage() {
     console.log();
     console.log("Options:");
     console.log("  -h     Show help");
-}
-
-async function getAfterBranch(argv) {
-    return argv[1] || process.env.TRAVIS_BRANCH || process.env.CIRCLE_BRANCH || currentBranch(process.cwd());
-}
-
-async function getBeforeBranch(argv) {
-    // TODO: detect default branch:
-    //       - makes request:
-    //           git remote show origin | grep "HEAD branch" | cut -d ":" -f 2
-    //       - go through list of candidates, main, trunk, master...
-    const beforeBranch = argv[0] || "master";
-
-    // TODO: detect if CI environment to parse PR info
-    // if (process.env.CI) { ...}
-
-    return beforeBranch;
 }
 
 async function runCheckers(beforeDir, afterDir, beforeBranch, afterBranch) {
@@ -86,11 +69,9 @@ async function main(argv) {
             process.exit(1);
         }
 
-        const beforeBranch = await getBeforeBranch(argv);
-        const afterBranch = await getAfterBranch(argv);
-        console.log(`comparing from ${beforeBranch} to ${afterBranch}`);
+        const { beforeDir, afterDir, beforeBranch, afterBranch } = await gitCheckoutBeforeAndAfter(process.cwd(), argv[0], argv[1]);
 
-        const { beforeDir, afterDir } = await checkoutBranches(process.cwd(), beforeBranch, afterBranch);
+        console.log(`comparing ${beforeBranch} to ${afterBranch}`);
 
         const results = await runCheckers(beforeDir, afterDir, beforeBranch, afterBranch);
 
