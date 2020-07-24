@@ -38,6 +38,7 @@ async function main(argv) {
             process.exit(1);
         }
 
+        console.log(`Cloning git repository...`);
         const { before, after } = await gitCheckoutBeforeAndAfter(process.cwd(), argv[0], argv[1]);
 
         console.log(`Comparing changes from '${before.branch}' to '${after.branch}'\n`);
