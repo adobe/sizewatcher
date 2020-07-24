@@ -44,7 +44,7 @@ sizewatcher before after
 ## Requirements
 
 **Try to avoid any config. Default `sizewatcher` in CI should be enough!**
- 
+
 - nodejs version 12+
 - `GITHUB_TOKEN` for checkout (in case not possible in CI)
 
@@ -63,7 +63,7 @@ thresholds:
 
 checkers:
     - git
-    - node_modules   
+    - node_modules
 ```
 
 ## Checkers

@@ -31,14 +31,14 @@ async function run(dir) {
     const checkoutDir = path.join(dir, path.normalize("build/checkout"));
 
     // test checkout logic
-    const { beforeDir, afterDir } = await gitCheckoutBeforeAndAfter(checkoutDir, "main");
+    const { before, after } = await gitCheckoutBeforeAndAfter(checkoutDir, "main");
 
     // assert
-    assert.notEqual(beforeDir, afterDir);
-    assert(fs.existsSync(beforeDir));
-    assert(fs.existsSync(afterDir));
-    assert.equal(await Git(beforeDir).revparse(["--abbrev-ref", "HEAD"]), "main");
-    assert.equal(await Git(afterDir).revparse(["HEAD"]), commitSha);
+    assert.notEqual(before.dir, after.dir);
+    assert(fs.existsSync(before.dir));
+    assert(fs.existsSync(after.dir));
+    assert.equal(await Git(before.dir).revparse(["--abbrev-ref", "HEAD"]), "main");
+    assert.equal(await Git(after.dir).revparse(["HEAD"]), commitSha);
 }
 
 describe("checkout", function() {

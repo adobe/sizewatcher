@@ -15,8 +15,8 @@
 'use strict';
 
 const gitCheckoutBeforeAndAfter = require("./lib/checkout");
-const CHECKERS = require('require-dir')("./lib/checkers");
-const prettyBytes = require('pretty-bytes');
+const render = require("./lib/render");
+const compare = require("./lib/compare");
 
 function printUsage() {
     console.log(`Usage: ${process.argv[1]} [<options>] [<before> [<after>]]`);
@@ -29,37 +29,6 @@ function printUsage() {
     console.log("  -h     Show help");
 }
 
-async function runCheckers(beforeDir, afterDir, beforeBranch, afterBranch) {
-    const results = [];
-
-    for (const name of Object.keys(CHECKERS)) {
-        const checker = CHECKERS[name];
-
-        if (await checker.shouldRun(afterDir)) {
-            console.log(`- ${name}`);
-            const result = await checker.compare(beforeDir, afterDir, beforeBranch, afterBranch);
-            results.push(result);
-        }
-    }
-
-    return results;
-}
-
-async function handleResults(results) {
-    for (const result of results) {
-        result.percentIncrease = ((result.afterSize - result.beforeSize) / result.beforeSize * 100).toFixed(1);
-
-        const sign = (result.afterSize > result.beforeSize) ? "+" : "";
-
-        result.text = `${result.name}: ${sign}${result.percentIncrease}% (from ${prettyBytes(result.beforeSize)} to ${prettyBytes(result.afterSize)})`;
-    }
-    console.log(results);
-
-    // TODO: report as PR comment
-    // TODO: threshold / aggregation logic
-    // TODO: report as status check
-}
-
 async function main(argv) {
     try {
         // yes, this should probably use a framework like oclif or yargs.
@@ -69,21 +38,30 @@ async function main(argv) {
             process.exit(1);
         }
 
-        const { beforeDir, afterDir, beforeBranch, afterBranch } = await gitCheckoutBeforeAndAfter(process.cwd(), argv[0], argv[1]);
+        const { before, after } = await gitCheckoutBeforeAndAfter(process.cwd(), argv[0], argv[1]);
 
-        console.log(`comparing ${beforeBranch} to ${afterBranch}`);
+        console.log(`Comparing changes from '${before.branch}' to '${after.branch}'\n`);
 
-        const results = await runCheckers(beforeDir, afterDir, beforeBranch, afterBranch);
+        const deltas = await compare(before, after);
 
-        await handleResults(results);
+        console.log();
+        console.log(render.asText(deltas, before.branch, after.branch));
+
+        // TODO: report as PR comment
+        // const markdown = render.asMarkdown(deltas);
+        // console.log("Markdown:");
+        // console.log(markdown);
+
+        // TODO: report as status check
+        // TODO: detect main = main case
+
     } catch (e) {
         console.error(e);
         process.exit(1);
+    } finally {
+        console.log("Done. Cleaning up...");
     }
 }
 
-// TODO: detect main = main case
-// TODO: cleanup checkout
-// TODO: checkout unit tests (travis, circleci, local)
 
 main(process.argv.slice(2));
