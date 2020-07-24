@@ -10,7 +10,7 @@
     "test": "nyc -r=text -r=lcov mocha",
     "posttest": "eslint .",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "sizewatcher": "node ./index.js main"
+    "sizewatcher": "DEBUG=sizewatcher* node ./index.js main"
   },
   "author": "Adobe",
   "license": "Apache-2.0",
