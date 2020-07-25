@@ -22,7 +22,7 @@ function printUsage() {
     console.log(`Usage: ${process.argv[1]} [<options>] [<before> [<after>]]`);
     console.log();
     console.log("Arguments:");
-    console.log("  <before>   Before branch/commit for comparison. Defaults to 'master'.");
+    console.log("  <before>   Before branch/commit for comparison. Defaults to default branch or main/master.");
     console.log("  <after>    After branch/commit for comparison. Defaults to current branch.");
     console.log();
     console.log("Options:");
