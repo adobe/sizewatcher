@@ -45,7 +45,7 @@ describe("checkout", function() {
 
     beforeEach(function() {
         delete process.env.GITHUB_ACTIONS;
-        delete process.env.GITHUB_REF;
+        delete process.env.GITHUB_HEAD_REF;
         delete process.env.TRAVIS;
         delete process.env.TRAVIS_BRANCH;
         delete process.env.CIRCLECI;
