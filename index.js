@@ -46,7 +46,7 @@ async function main(argv) {
         const deltas = await compare(before, after);
 
         console.log();
-        console.log(render.asText(deltas, before.branch, after.branch));
+        console.log(render.asText(deltas));
 
         // TODO: report as PR comment
         // const markdown = render.asMarkdown(deltas);

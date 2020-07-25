@@ -29,5 +29,4 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run: npm test
-      - run: env | sort
       - run: npm run sizewatcher
