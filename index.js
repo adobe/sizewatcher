@@ -17,6 +17,7 @@
 const gitCheckoutBeforeAndAfter = require("./lib/checkout");
 const render = require("./lib/render");
 const compare = require("./lib/compare");
+const issueComment = require("./lib/issuecomment");
 
 function printUsage() {
     console.log(`Usage: ${process.argv[1]} [<options>] [<before> [<after>]]`);
@@ -48,12 +49,18 @@ async function main(argv) {
         console.log();
         console.log(render.asText(deltas));
 
-        // TODO: report as PR comment
-        // const markdown = render.asMarkdown(deltas);
-        // console.log("Markdown:");
-        // console.log(markdown);
+        if (process.env.GITHUB_TOKEN) {
+            // report as PR comment
+            const markdown = render.asMarkdown(deltas);
+            // console.log("Markdown:");
+            // console.log(markdown);
+            await issueComment(owner, repo, issue_number, markdown);
 
-        // TODO: report as status check
+            // TODO: report as status check
+        } else {
+            console.error("Error: Missing GITHUB_TOKEN environment variable. Cannot comment on PR or update status checks in github.");
+        }
+
         // TODO: detect main = main case
 
     } catch (e) {
