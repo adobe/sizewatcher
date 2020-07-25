@@ -22,3 +22,6 @@ git commit -a -m "branch commit"
 
 # need the commit hash in the js code, and it's different each run
 git rev-parse HEAD > ../commit.hash
+
+# back to main
+git checkout main

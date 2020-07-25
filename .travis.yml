@@ -20,8 +20,6 @@ install:
 
 script:
   - npm test
-  - git remote show origin | grep "HEAD branch" | cut -d ":" -f 2
-  - git remote show origin
   - npm run sizewatcher
 
 after_success:
