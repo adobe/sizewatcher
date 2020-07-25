@@ -29,4 +29,6 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run: npm test
+      - run: git remote show origin | grep "HEAD branch" | cut -d ":" -f 2
+      - run: git remote show origin
       - run: npm run sizewatcher

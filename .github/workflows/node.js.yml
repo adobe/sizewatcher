@@ -23,4 +23,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm test
+    - run: git remote show origin | grep "HEAD branch" | cut -d ":" -f 2
+    - run: git remote show origin
     - run: npm run sizewatcher
