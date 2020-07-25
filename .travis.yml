@@ -20,6 +20,7 @@ install:
 
 script:
   - npm test
+  - env | sort
   - npm run sizewatcher
 
 after_success:
