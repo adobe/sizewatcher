@@ -54,7 +54,8 @@ async function main(argv) {
             const markdown = render.asMarkdown(deltas);
             // console.log("Markdown:");
             // console.log(markdown);
-            await issueComment(owner, repo, issue_number, markdown);
+            // TODO: reade GITHUB_EVENT_PATH
+            await issueComment("adobe", "sizewatcher", "7", markdown);
 
             // TODO: report as status check
         } else {
