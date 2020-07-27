@@ -51,11 +51,25 @@ async function main(argv) {
 
         if (process.env.GITHUB_TOKEN) {
             // report as PR comment
+
+            // TODO: get PR from commit (for Travis branch)
+            // https://github.community/t/get-pull-request-associated-with-a-commit/13674
+            // https://octokit.github.io/rest.js/v18#pulls-list
+            // TODO: or read GITHUB_EVENT_PATH ??
+
             const markdown = render.asMarkdown(deltas);
-            // console.log("Markdown:");
-            // console.log(markdown);
-            // TODO: reade GITHUB_EVENT_PATH
-            await issueComment("adobe", "sizewatcher", "7", markdown);
+            console.log("Markdown:");
+            console.log(markdown);
+
+            await issueComment("adobe", "sizewatcher", "7", markdown, comment => {
+                const match = comment.body.match(/<!--\s+sizewatcher @ (\b[0-9a-f]{5,40}\b).*-->/);
+                if (match) {
+                    return match[1] === after.sha ? "keep" : "update";
+                } else {
+                    return false;
+                }
+            });
+
 
             // TODO: report as status check
         } else {
