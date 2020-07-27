@@ -15,9 +15,8 @@
 'use strict';
 
 const gitCheckoutBeforeAndAfter = require("./lib/checkout");
-const render = require("./lib/render");
 const compare = require("./lib/compare");
-const githubIssueComment = require("./lib/issuecomment");
+const report = require("./lib/report");
 
 function printUsage() {
     console.log(`Usage: ${process.argv[1]} [<options>] [<before> [<after>]]`);
@@ -39,6 +38,8 @@ async function main(argv) {
             process.exit(1);
         }
 
+        // TODO: detect main = main case
+
         console.log(`Cloning git repository...`);
         const { before, after } = await gitCheckoutBeforeAndAfter(process.cwd(), argv[0], argv[1]);
 
@@ -46,39 +47,7 @@ async function main(argv) {
 
         const deltas = await compare(before, after);
 
-        console.log();
-        console.log(render.asText(deltas));
-
-        if (process.env.GITHUB_TOKEN) {
-            // report as PR comment
-
-            // TODO: get PR from commit (for Travis branch)
-            // https://github.community/t/get-pull-request-associated-with-a-commit/13674
-            // https://octokit.github.io/rest.js/v18#pulls-list
-            // TODO: or read GITHUB_EVENT_PATH ??
-
-            const markdown = render.asMarkdown(deltas);
-            // console.log("Markdown:");
-            // console.log(markdown);
-
-            const body = `<!-- sizewatcher @ ${after.sha} -->\n\n${markdown}`;
-
-            await githubIssueComment("adobe", "sizewatcher", "7", body, comment => {
-                const match = comment.body.match(/<!--\s+sizewatcher @ (\b[0-9a-f]{5,40}\b).*-->/);
-                if (match) {
-                    return match[1] === after.sha ? "keep" : "update";
-                } else {
-                    return false;
-                }
-            });
-
-
-            // TODO: report as status check
-        } else {
-            console.error("Error: Missing GITHUB_TOKEN environment variable. Cannot comment on PR or update status checks in github.");
-        }
-
-        // TODO: detect main = main case
+        await report(deltas);
 
     } catch (e) {
         console.error(e);
