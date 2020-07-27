@@ -14,67 +14,19 @@
 
 'use strict';
 
-const { checkoutBranches, currentBranch } = require("./lib/checkout");
-const CHECKERS = require('require-dir')("./lib/checkers");
-const prettyBytes = require('pretty-bytes');
+const gitCheckoutBeforeAndAfter = require("./lib/checkout");
+const compare = require("./lib/compare");
+const report = require("./lib/report");
 
 function printUsage() {
     console.log(`Usage: ${process.argv[1]} [<options>] [<before> [<after>]]`);
     console.log();
     console.log("Arguments:");
-    console.log("  <before>   Before branch/commit for comparison. Defaults to 'master'.");
+    console.log("  <before>   Before branch/commit for comparison. Defaults to default branch or main/master.");
     console.log("  <after>    After branch/commit for comparison. Defaults to current branch.");
     console.log();
     console.log("Options:");
     console.log("  -h     Show help");
-}
-
-async function getAfterBranch(argv) {
-    return argv[1] || process.env.TRAVIS_BRANCH || process.env.CIRCLE_BRANCH || currentBranch(process.cwd());
-}
-
-async function getBeforeBranch(argv) {
-    // TODO: detect default branch:
-    //       - makes request:
-    //           git remote show origin | grep "HEAD branch" | cut -d ":" -f 2
-    //       - go through list of candidates, main, trunk, master...
-    const beforeBranch = argv[0] || "master";
-
-    // TODO: detect if CI environment to parse PR info
-    // if (process.env.CI) { ...}
-
-    return beforeBranch;
-}
-
-async function runCheckers(beforeDir, afterDir, beforeBranch, afterBranch) {
-    const results = [];
-
-    for (const name of Object.keys(CHECKERS)) {
-        const checker = CHECKERS[name];
-
-        if (await checker.shouldRun(afterDir)) {
-            console.log(`- ${name}`);
-            const result = await checker.compare(beforeDir, afterDir, beforeBranch, afterBranch);
-            results.push(result);
-        }
-    }
-
-    return results;
-}
-
-async function handleResults(results) {
-    for (const result of results) {
-        result.percentIncrease = ((result.afterSize - result.beforeSize) / result.beforeSize * 100).toFixed(1);
-
-        const sign = (result.afterSize > result.beforeSize) ? "+" : "";
-
-        result.text = `${result.name}: ${sign}${result.percentIncrease}% (from ${prettyBytes(result.beforeSize)} to ${prettyBytes(result.afterSize)})`;
-    }
-    console.log(results);
-
-    // TODO: report as PR comment
-    // TODO: threshold / aggregation logic
-    // TODO: report as status check
 }
 
 async function main(argv) {
@@ -86,23 +38,24 @@ async function main(argv) {
             process.exit(1);
         }
 
-        const beforeBranch = await getBeforeBranch(argv);
-        const afterBranch = await getAfterBranch(argv);
-        console.log(`comparing from ${beforeBranch} to ${afterBranch}`);
+        // TODO: detect main = main case
 
-        const { beforeDir, afterDir } = await checkoutBranches(process.cwd(), beforeBranch, afterBranch);
+        console.log(`Cloning git repository...`);
+        const { before, after } = await gitCheckoutBeforeAndAfter(process.cwd(), argv[0], argv[1]);
 
-        const results = await runCheckers(beforeDir, afterDir, beforeBranch, afterBranch);
+        console.log(`Comparing changes from '${before.branch}' to '${after.branch}'\n`);
 
-        await handleResults(results);
+        const deltas = await compare(before, after);
+
+        await report(deltas);
+
     } catch (e) {
         console.error(e);
         process.exit(1);
+    } finally {
+        console.log("Done. Cleaning up...");
     }
 }
 
-// TODO: detect main = main case
-// TODO: cleanup checkout
-// TODO: checkout unit tests (travis, circleci, local)
 
 main(process.argv.slice(2));

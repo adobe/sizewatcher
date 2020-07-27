@@ -21,6 +21,8 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
+    - run: npm install
     - run: npm test
     - run: npm run sizewatcher
+      env: # Or as an environment variable
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

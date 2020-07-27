@@ -12,7 +12,7 @@
 
 'use strict';
 
-const { checkoutBranches, currentBranch } = require("../lib/checkout");
+const gitCheckoutBeforeAndAfter = require("../lib/checkout");
 const { execSync } = require("child_process");
 const path = require("path");
 const fs = require("fs");
@@ -31,23 +31,26 @@ async function run(dir) {
     const checkoutDir = path.join(dir, path.normalize("build/checkout"));
 
     // test checkout logic
-    const current = await currentBranch(checkoutDir);
-    const { beforeDir, afterDir } = await checkoutBranches(checkoutDir, "main", current);
+    const { before, after } = await gitCheckoutBeforeAndAfter(checkoutDir, "main");
 
     // assert
-    assert.notEqual(beforeDir, afterDir);
-    assert(fs.existsSync(beforeDir));
-    assert(fs.existsSync(afterDir));
-    assert.equal(await Git(beforeDir).revparse(["--abbrev-ref", "HEAD"]), "main");
-    assert.equal(await Git(afterDir).revparse(["HEAD"]), commitSha);
+    assert.notEqual(before.dir, after.dir);
+    assert(fs.existsSync(before.dir));
+    assert(fs.existsSync(after.dir));
+    assert.equal(await Git(before.dir).revparse(["--abbrev-ref", "HEAD"]), "main");
+    assert.equal(await Git(after.dir).revparse(["HEAD"]), commitSha);
 }
 
 describe("checkout", function() {
 
     beforeEach(function() {
         delete process.env.GITHUB_ACTIONS;
+        delete process.env.GITHUB_HEAD_REF;
         delete process.env.TRAVIS;
+        delete process.env.TRAVIS_PULL_REQUEST_BRANCH;
+        delete process.env.TRAVIS_BRANCH;
         delete process.env.CIRCLECI;
+        delete process.env.CIRCLE_BRANCH;
     });
 
     it("handles normal checkouts", async function() {
