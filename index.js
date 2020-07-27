@@ -58,10 +58,10 @@ async function main(argv) {
             // TODO: or read GITHUB_EVENT_PATH ??
 
             const markdown = render.asMarkdown(deltas);
-            console.log("Markdown:");
-            console.log(markdown);
+            // console.log("Markdown:");
+            // console.log(markdown);
 
-            const body = `<!-- sizewatcher @ ${after.sha} -->\n${markdown}`;
+            const body = `<!-- sizewatcher @ ${after.sha} -->\n\n${markdown}`;
 
             await issueComment("adobe", "sizewatcher", "7", body, comment => {
                 const match = comment.body.match(/<!--\s+sizewatcher @ (\b[0-9a-f]{5,40}\b).*-->/);
