@@ -61,7 +61,9 @@ async function main(argv) {
             console.log("Markdown:");
             console.log(markdown);
 
-            await issueComment("adobe", "sizewatcher", "7", markdown, comment => {
+            const body = `<!-- sizewatcher @ ${after.sha} -->\n${markdown}`;
+
+            await issueComment("adobe", "sizewatcher", "7", body, comment => {
                 const match = comment.body.match(/<!--\s+sizewatcher @ (\b[0-9a-f]{5,40}\b).*-->/);
                 if (match) {
                     return match[1] === after.sha ? "keep" : "update";
