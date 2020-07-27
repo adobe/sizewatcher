@@ -17,7 +17,7 @@
 const gitCheckoutBeforeAndAfter = require("./lib/checkout");
 const render = require("./lib/render");
 const compare = require("./lib/compare");
-const issueComment = require("./lib/issuecomment");
+const githubIssueComment = require("./lib/issuecomment");
 
 function printUsage() {
     console.log(`Usage: ${process.argv[1]} [<options>] [<before> [<after>]]`);
@@ -63,7 +63,7 @@ async function main(argv) {
 
             const body = `<!-- sizewatcher @ ${after.sha} -->\n\n${markdown}`;
 
-            await issueComment("adobe", "sizewatcher", "7", body, comment => {
+            await githubIssueComment("adobe", "sizewatcher", "7", body, comment => {
                 const match = comment.body.match(/<!--\s+sizewatcher @ (\b[0-9a-f]{5,40}\b).*-->/);
                 if (match) {
                     return match[1] === after.sha ? "keep" : "update";
