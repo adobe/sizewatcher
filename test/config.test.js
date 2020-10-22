@@ -85,4 +85,18 @@ report:
         assert.strictEqual(cfg.report.githubComment, false);
         assert.strictEqual(cfg.report.githubStatus, true);
     });
+
+    it("returns default config in asYaml() if no config file exists", function() {
+        mockFs();
+        config.reload();
+        const yaml = config.asYaml();
+        assert.strictEqual(yaml, `limits:
+  fail: 50%
+  warn: 10%
+  ok: '-10%'
+report:
+  githubComment: true
+  githubStatus: false
+`);
+    });
 });
