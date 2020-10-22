@@ -23,6 +23,7 @@ describe("config", function() {
     });
 
     it("loads default config if no config file exists", function() {
+        mockFs();
         const cfg = config.reload();
         assert.strictEqual(typeof cfg, "object");
         assert.deepStrictEqual(cfg.limits, {
@@ -30,9 +31,11 @@ describe("config", function() {
             warn: "10%",
             ok: "-10%"
         });
+        assert.ok(cfg.report.githubComment);
+        assert.ok(!cfg.report.githubStatus);
     });
 
-    it("loads config file if exists", function() {
+    it("loads config file with percentage limits", function() {
         mockFs({
             ".sizewatcher.yml":
 `
@@ -66,5 +69,34 @@ limits:
             warn: 100,
             ok: 50
         });
+    });
+
+    it("loads config file with reportStatus", function() {
+        mockFs({
+            ".sizewatcher.yml":
+`
+report:
+    githubComment: false
+    githubStatus: true
+`
+        });
+        const cfg = config.reload();
+        assert.strictEqual(typeof cfg, "object");
+        assert.strictEqual(cfg.report.githubComment, false);
+        assert.strictEqual(cfg.report.githubStatus, true);
+    });
+
+    it("returns default config in asYaml() if no config file exists", function() {
+        mockFs();
+        config.reload();
+        const yaml = config.asYaml();
+        assert.strictEqual(yaml, `limits:
+  fail: 50%
+  warn: 10%
+  ok: '-10%'
+report:
+  githubComment: true
+  githubStatus: false
+`);
     });
 });
