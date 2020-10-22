@@ -30,9 +30,11 @@ describe("config", function() {
             warn: "10%",
             ok: "-10%"
         });
+        assert.ok(cfg.report.githubComment);
+        assert.ok(!cfg.report.githubStatus);
     });
 
-    it("loads config file if exists", function() {
+    it("loads config file with percentage limits", function() {
         mockFs({
             ".sizewatcher.yml":
 `
@@ -66,5 +68,20 @@ limits:
             warn: 100,
             ok: 50
         });
+    });
+
+    it("loads config file with reportStatus", function() {
+        mockFs({
+            ".sizewatcher.yml":
+`
+report:
+    githubComment: false
+    githubStatus: true
+`
+        });
+        const cfg = config.reload();
+        assert.strictEqual(typeof cfg, "object");
+        assert.strictEqual(cfg.report.githubComment, false);
+        assert.strictEqual(cfg.report.githubStatus, true);
     });
 });
