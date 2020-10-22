@@ -14,6 +14,8 @@
 
 'use strict';
 
+// index.js - main cli entry point
+
 const gitCheckoutBeforeAndAfter = require("./lib/checkout");
 const compare = require("./lib/compare");
 const report = require("./lib/report");
