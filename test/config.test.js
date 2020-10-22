@@ -23,6 +23,7 @@ describe("config", function() {
     });
 
     it("loads default config if no config file exists", function() {
+        mockFs();
         const cfg = config.reload();
         assert.strictEqual(typeof cfg, "object");
         assert.deepStrictEqual(cfg.limits, {
