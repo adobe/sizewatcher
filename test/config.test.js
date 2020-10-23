@@ -98,6 +98,7 @@ report:
 report:
   githubComment: true
   githubStatus: false
+comparators: {}
 `);
     });
 });
