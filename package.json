@@ -9,7 +9,7 @@
   "scripts": {
     "test": "nyc -r=text -r=lcov mocha",
     "posttest": "eslint .",
-    "report-coverage": "nyc report --reporter=text-lcov | coveralls",
+    "report-coverage": "nyc report --reporter=text-lcov | coveralls -v",
     "sizewatcher": "DEBUG=sizewatcher* node ./index.js"
   },
   "author": "Adobe",
