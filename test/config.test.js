@@ -33,6 +33,7 @@ describe("config", function() {
         });
         assert.ok(cfg.report.githubComment);
         assert.ok(!cfg.report.githubStatus);
+        assert.strictEqual(typeof cfg.comparators, "object");
     });
 
     it("loads config file with percentage limits", function() {
