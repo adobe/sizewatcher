@@ -368,7 +368,8 @@ comparators:
   # custom comparator (only active if configured)
   custom:
     - name: my artifact
-      # path to file or folder whose size should be measured (absolute or relative)
+      # path to file or folder whose size should be measured
+      # path must be relative to repo root
       # comparator only runs if that path exists
       path: build/artifact
 
@@ -456,9 +457,15 @@ Name: `custom`
 
 Trigger: Runs if the path is found in either before or after version.
 
-Details: Shows the file size or largest files in folder.
+Details: Shows the new file/folder size.
 
 ---
+
+New size:
+
+```
+18.6 kB README.md
+```
 ---
 
 ## Contribute
