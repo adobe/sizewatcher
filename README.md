@@ -341,7 +341,9 @@ report:
 # note that one failing or warning comparator is enough to fail or warn
 # can be either
 # - percentage: "50%" ("-10%" for size decrease)
-# - absolute byte value: 1000000
+# - absolute limit, as byte string: "10 MB", "5 KB"
+#   see https://www.npmjs.com/package/xbytes
+# - absolute limit, as byte number: 1000000
 limits:
   # when to fail - default: 50%
   fail: 50%
@@ -363,9 +365,9 @@ comparators:
     # specific limits
     # same options as for the "limits" at the root
     limits:
-      fail: 10000000
-      warn: 9000000
-      ok: 1000000
+      fail: 10 MB
+      warn: 9 MB
+      ok: 1 MB
 
   # custom comparator (only active if configured)
   custom:
@@ -380,7 +382,7 @@ comparators:
     - path: some_directory/
       # limits can be configured as well
       limits:
-        fail: 10000000
+        fail: 10 MB
 ```
 
 ## Comparators reference
