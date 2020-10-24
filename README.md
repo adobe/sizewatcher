@@ -468,6 +468,32 @@ New size:
 ```
 ---
 
+Configuration:
+
+This comparator requires configuration in the `.sizewatcher.yml`:
+
+```yaml
+comparators:
+  custom:
+    path: build/artifact
+```
+
+To have multiple paths, with custom names:
+
+```yaml
+comparators:
+  custom:
+    - name: my artifact 1
+      path: build/artifact
+    - name: my artifact 2
+      path: build/artifact2
+```
+
+Options:
+- `path` (required) relative path to file or folder to measure
+- `name` (optional) custom label
+- `limits` can be set as usual
+
 ## Contribute
 
 Contributions are welcome! Read the [Contributing Guide](./.github/CONTRIBUTING.md) for general guidelines.
