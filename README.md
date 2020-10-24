@@ -6,33 +6,197 @@
 [![Github Actions Node.js CI Status](https://github.com/adobe/sizewatcher/workflows/Node.js%20CI/badge.svg)](https://github.com/adobe/sizewatcher/actions?query=workflow%3A%22Node.js+CI%22)
 [![CodeQL Status](https://github.com/adobe/sizewatcher/workflows/CodeQL/badge.svg)](https://github.com/adobe/sizewatcher/actions?query=workflow%3ACodeQL)
 
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
-🚧 Under development 🚧
+<!-- code_chunk_output -->
+
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [CI Setup](#ci-setup)
+  - [Github Actions](#github-actions)
+  - [Travis CI](#travis-ci)
+  - [CircleCI](#circleci)
+  - [Other CIs](#other-cis)
+- [Configuration](#configuration)
+- [Comparators reference](#comparators-reference)
+  - [git](#git)
+  - [node_modules](#node_modules)
+- [Contribute](#contribute)
+  - [New comparator](#new-comparator)
+- [Licensing](#licensing)
+
+<!-- /code_chunk_output -->
 
 # sizewatcher
 
-CI tool to warn about size increases in github PRs. Will check:
+`sizewatcher` is a CI tool that automatically warns about size increases in Github pull requests. This allows early detection of commonly undesirable issues such as
+- addition of large dependencies (and transient dependency trees)
+- accidental addition of large binary files to the git repository
+- sudden increase in build artifact size
+- etc.
 
-- `nodejs` `node_modules` increases
-- `git` repo increases
-- ... more possible in the future, other languages...
+`sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded.
+
+Currently supported:
+
+- Node.js/npm `node_modules` size
+- `git` repository size
+- _more languages & options possible in the future_
+
+This is an example of a Github PR comment:
+
+---
+
+📈 [Sizewatcher](https://github.com/adobe/sizewatcher) measured these changes:
+
+<details>
+<summary>✅ <code>git</code> <b>+0.2%</b> (246 kB => 247 kB)</summary>
+<br>
+
+Largest files in new changes:
+```
+360cccafa87c    974B .npmignore
+```
+</details>
+
+<details>
+<summary>✅ <code>node_modules</code> has no changes (46.8 MB)</summary>
+<br>
+
+Largest node modules:
+```
+┌───────────────┬─────────────┬────────┐
+│ name          │ children    │ size   │
+├───────────────┼─────────────┼────────┤
+│ @octokit/rest │ 33          │ 11.25M │
+├───────────────┼─────────────┼────────┤
+│ js-yaml       │ 3           │ 0.72M  │
+├───────────────┼─────────────┼────────┤
+│ simple-git    │ 2           │ 0.24M  │
+├───────────────┼─────────────┼────────┤
+│ tmp           │ 13          │ 0.22M  │
+├───────────────┼─────────────┼────────┤
+│ debug         │ 1           │ 0.08M  │
+├───────────────┼─────────────┼────────┤
+│ deepmerge     │ 0           │ 0.03M  │
+├───────────────┼─────────────┼────────┤
+│ require-dir   │ 0           │ 0.02M  │
+├───────────────┼─────────────┼────────┤
+│ du            │ 1           │ 0.01M  │
+├───────────────┼─────────────┼────────┤
+│ pretty-bytes  │ 0           │ 0.01M  │
+├───────────────┼─────────────┼────────┤
+│ 9 modules     │ 34 children │ 4.57M  │
+└───────────────┴─────────────┴────────┘
+```
+</details>
+
+<details>
+<summary>Notes</summary>
+<br>
+
+- PR branch: `docs` @ 15626a050330492da8b745dadb4f5d304b670e83
+- Base branch: `main`
+- Sizewatcher v1.0.0
+- Configuration
+<pre>
+limits:
+  fail: 50%
+  warn: 10%
+  ok: '-10%'
+report:
+  githubComment: true
+  githubStatus: false
+comparators: {}
+</pre></details>
+
+---
+
+By default `sizewatcher` will
+- report result as PR comment
+- not set a commit status
+  - as this will block the PR if it fails
+  - opt-in using `report.githubStatus: true`, see [Configuration](#configuration) below
+- fail ❌ at a 50%+ increase
+- warn ⚠️ at a 10%+ increase
+- report ok ✅ if the size does not change by +/-10%
+- cheer 🎉 if there is a 10% decrease
+
+
+## Requirements
+
+- [Nodejs](https://nodejs.org) version 10+
+  - recommended to use latest stable version "LTS"
+- CI system running on Github pull requests
+  - [Github Actions](https://github.com/features/actions) (simplest setup)
+  - [Travis CI](https://travis-ci.org)
+  - [CircleCI](https://circleci.com)
+  - others might work too
+
+## Installation
+
+You can install the `sizewatcher` tool locally for testing or checking your changes before committing:
+
+```
+npm install -g @adobe/sizewatcher
+```
 
 ## Usage
 
-Run in CIs in context of PRs using:
+When run locally, `sizewatcher` will output its results on the command line.
+
+See the command line help with:
 
 ```
-npx @adobe/sizewatcher
+sizewatcher -h
 ```
 
-Can also be run locally. To install:
+Help output:
+```
+Usage: /usr/local/bin/sizewatcher [<options>] [<before> [<after>]]
 
-- install globally using `npm install -g @adobe/sizewatcher` and run as `sizewatcher`
-- alternatively add as dev dependency to your project using `npm install --save-dev @adobe/sizewatcher` and run using `npx @adobe/sizewatcher` (adjust examples below)
+Arguments:
+  <before>   Before branch/commit for comparison. Defaults to default branch or main/master.
+  <after>    After branch/commit for comparison. Defaults to current branch.
 
-By default will compare current branch ("new") against `master` ("before").
+Options:
+  -h     Show help
+```
 
-To compare current branch with another base branch `base`:
+In the simplest case, run inside a git repository without arguments. This will compare the current checked out branch against the base (`main` or `master`):
+
+```
+sizewatcher
+```
+
+Example output:
+```
+> sizewatcher
+Cloning git repository...
+Comparing changes from 'main' to 'docs'
+
+Calculating size changes for
+- git
+- node_modules
+
+Sizewatcher measured the following changes:
+
+  'main' => 'docs' (sha 15626a050330492da8b745dadb4f5d304b670e83)
+
++ ✅ git: 0.2% (179 kB => 179 kB)
+
+  Largest files in new changes:
+
+  360cccafa87c    974B .npmignore
+...
+Error: Cannot identify github repository. Cannot comment on PR or update status checks in github.
+Done. Cleaning up...
+```
+
+Note that the message `Error: Cannot identify github repository.` will be normal if run locally.
+
+To compare the current branch with a different base branch (`base`):
 
 ```
 sizewatcher base
@@ -44,176 +208,278 @@ To compare arbitrary branches or revisions `before` with `after`:
 sizewatcher before after
 ```
 
-## Supported CIs
+## CI Setup
 
-- TravisCI
-- CircleCI
-- ... more possible in the future
+To run `sizewatcher` in your CI, which is where it should run, it is best run using [npx](https://nodejs.dev/learn/the-npx-nodejs-package-runner), which comes pre-installed with nodejs and will automatically download and run the latest version in one go:
 
-## Requirements
+```
+npx @adobe/sizewatcher
+```
 
-**Try to avoid any config. Default `sizewatcher` in CI should be enough!**
+Depending on the CI, branches of the pull request are automatically detected. Last but not least, to be able to automatically comment on the PR or report a commit status, a **github token** must be set as environment variable:
 
-- nodejs version 12+
-- `GITHUB_TOKEN` for checkout (in case not possible in CI)
+```
+GITHUB_TOKEN=....
+```
 
-## Config
+This token should be a service/bot user that has read/pull permission on the repository (allowing to comment). Note that the comments will be shown under that user's name. For example, you might want to create a user named `sizewatcher-bot` or the like. With Github Actions this is not required, it has a built-in `github-actions` bot user.
 
-- `.sizewatcher` yaml config file
-- thresholds for warning icons/colors
-- what checkers to run (auto identify by default)
-- custom checker
+
+See below for CI specific setup.
+
+### Github Actions
+
+For [Github Actions](https://github.com/features/actions) you need to
+- ensure Node.js is installed using `actions/setup-node`
+- run `npx @adobe/sizewatcher`
+- set a `GITHUB_TOKEN` which can leverage the built-in `secrets.GITHUB_TOKEN` (no need to create the token yourself!)
+
+Example [workflow yaml](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions) snippet (`.github/workflows/*.yml`):
 
 ```yaml
-thresholds:
-   decreased: -20%
-   increased: 10%
-   increased_greatly: 50%
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-checkers:
-    - git
-    - node_modules
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14'
+    # run your build/test first in case you want to measure build results
+    - run: npm install && npm test
+    # ---------- this runs sizewatcher ------------
+    - run: npx @adobe/sizewatcher
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-## Checkers
+### Travis CI
 
-### checker: node_modules
+For [Travis CI](https://travis-ci.org) you need to
+- use `language: node_js`
+  - if you already use a different language, find a way to ensure Nodejs 10+ is installed
+- under `script` run `npx @adobe/sizewatcher`, typically after your main build or test
+- set a secret environment variable `GITHUB_TOKEN` in the [Travis repository settings](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with a github token with permission to comment on PRs and reporting commit statuses for the repository
 
-- Run: if `package.json` is found
-- Logic: `npm install`, then total folder size of `node_modules`.
-- Details: [cost-of-modules](https://github.com/siddharthkp/cost-of-modules) table before/after, count number of libraries
+Example `.travis.yml`:
 
-### checker: git repo
+```yaml
+language: node_js
 
-- Run: always
-- Logic: Simple `du -sh` of folder without `.git` folder. Maybe more advanced later.
-- Details:
-  - [show largest commits](https://stackoverflow.com/questions/10622179/how-to-find-identify-large-commits-in-git-history)
-  - show largest files
+install:
+  - npm install
 
-### generic checker
-
-Could be reused by other checkers, or manually configured in `.sizewatcher` (but wait for some use cases for finding the right abstraction; e.g. maven dependencies aren't in a single folder).
-
-- specify name
-- specify directory to measure, with exclusions
-- specify command for details (optional; command must be installed)
-
-## Development
-
-### Basic PR delta framework
-
-1. Create separate temporary directory `TMP_DIR` - location depends on CI?
-2. Copy existing checkout inside `$TMP_DIR/pr`
-3. Identify the base branch
-   - get PR id/URL
-   - get PR info from github
-   - use octokit/rest
-   - get base branch from URL
-4. git clone base branch into `$TMP_DIR/base`
-5. Calculate sizes and delta
-   - **see below**
-   - aggregate in a list, each entry has:
-     - name
-     - bytes before
-     - bytes after
-     - custom markdown text with details
-6. (If PR detected and GH credentials available) Update PR comment with result list
-  - get PR URL
-  - use octokit/rest
-  - list PR comments
-  - find comment from CI user plus certain marking in text
-  - if exists, overwrite
-  - otherwise create comment
-7. Log results (for local use)
-8. Remove `TMP_DIR` again - should not impact anything else in CI build
-
-### Breaking it down
-
-Modules/repos:
-
-- `sizewatcher`: main one
-- `github-pr-comment`: add or update a PR comment as bot
-- `github-branch-compare`: help checkout TODO
-
-### Output
-
-```
-sizewatcher (aggregated GOOD/OK/BAD icon)
-
-> `node_modules` increased 50% / 50 MB from 100 MB to 150 MB (green/orange/red)
-  <table of largest modules>
-
-> `git repo` increased
-
+script:
+  # run your build/test first in case you want to measure build results
+  - npm test
+  # ---------- this runs sizewatcher ------------
+  - npx @adobe/sizewatcher
 ```
 
-Github status checks:
-- one for each checker with result in custom message
+### CircleCI
 
-### Icons/colors
+For [CircleCI](https://circleci.com) you need to
+- use a docker image with Nodejs 10+ installed
+  - alternatively install [using nvm](https://www.google.com/search?q=circleci+use+nvm)
+- run `npx @adobe/sizewatcher`, typically after your main build or test
+- set a secret environment variable `GITHUB_TOKEN` in the [CircleCI project settings](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-project) (or in a [Context](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-context)) with a github token with permission to comment on PRs and reporting commit statuses for the repository
 
-- decreased: green with party icon
-- same (+/- some percent): green
-- increased: orange
-- increased a lot (by default): red
+Example `.circleci/config.yml`:
 
-### Aggregation
+```yaml
+version: 2
 
-- if at least one red => red
-- if at least one orange => orange
-- otherwise, if all green => green
-- some decreased, others same => green with party icon
+jobs:
+  build:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
 
-### Branch detection
+      # run your build/test first in case you want to measure build results
+      - run: npm install
+      - run: npm test
 
-#### A) Manual
+      # ---------- this runs sizewatcher ------------
+      - run: npx @adobe/sizewatcher
+```
 
-1. specify before and after branch
-2. specify only before (base), using current branch/revision
+### Other CIs
 
-#### B) PR
+This is not tested well but might work.
 
-1. Travis PR
-   - merges with master first, (TRAVIS_PULL_REQUEST_BRANCH)
-   - has PR info => can retrieve PR base branch
-   - if `TRAVIS_PULL_REQUEST!=false` then
-     - `base = TRAVIS_BRANCH`
-       `pr = TRAVIS_PULL_REQUEST_BRANCH`
-2. Travis Branch
-   - builds current branch (TRAVIS_BRANCH)
-   - has no PR info => can only guess PR base branch
-   - if `TRAVIS_PULL_REQUEST==false` then
-     - `base = guess`
-       `pr = TRAVIS_BRANCH`
-3. CircleCI
-   - builds current branch (CIRCLE_BRANCH)
-   - has PR info if PR => can retrieve PR base branch
-   - guess base branch OR
-   - use github API to retrieve pr branch
-     - `CIRCLE_PROJECT_REPONAME=sizewatcher`
-       `CIRCLE_PROJECT_USERNAME=adobe`
-       `CI_PULL_REQUEST=https://github.com/adobe/sizewatcher/pull/7` (take # after last /)
-       `pr = CIRCLE_BRANCH`
-4. Github Actions
-   - merges with master first (GITHUB_HEAD_REF)
-   - has PR info if PR => can retrieve PR base branch
-   - `base = GITHUB_BASE_REF`
-     `pr = GITHUB_HEAD_REF`
+Ensure Nodejs 10+ is installed.
 
-### Links
+Set these environment variables in the CI job:
 
-- [Travis Environment Variables](https://docs.travis-ci.com/user/environment-variables/#default-environment-variables)
-- [CircleCI Environment Variables](https://circleci.com/docs/2.0/env-vars/#built-in-environment-variables)
-- [Github Actions Environment Variables](https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables)
-- [npm du](https://www.npmjs.com/package/du)
-- [npm get-folder-size](https://www.npmjs.com/package/get-folder-size)
-- [octokit/rest](https://github.com/octokit/rest.js/)
-    - [api docs](https://octokit.github.io/rest.js/v17)
+- `GITHUB_BASE_REF` name of the base branch into which the pull request is being merged
+- `GITHUB_HEAD_REF` name of the branch of the pull request
+- `GITHUB_TOKEN` a github token with permission to comment on PRs and reporting commit statuses for the repository. This is a credential so use the proper CI credential management and never check this into the git repository!
 
-## Contributing
+After your build or in parallel, run
 
-Contributions are welcomed! Read the [Contributing Guide](./.github/CONTRIBUTING.md) for more information.
+```
+npx @adobe/sizewatcher
+```
+
+## Configuration
+
+Configure the behavior of `sizewatcher` by creating a `.sizewatcher.yml` in the root of the git repository. The config file is entirely optional.
+
+Complete example and reference:
+
+```yaml
+report:
+  # to report a github commit status (will block PR if it fails)
+  githubStatus: true   # default: false
+  # to report a comment on the github PR
+  githubComment: false # default: true
+
+# global thresholds when to warn or fail a build
+# note that one failing or warning comparator is enough to fail or warn
+# can be either
+# - percentage: "50%" ("-10%" for size decrease)
+# - absolute byte value: 1000000
+limits:
+  # when to fail - default: 50%
+  fail: 50%
+  # when to warn - default: 10%
+  warn: 30%
+  # below the ok limit you will get a cheers for making it notably smaller
+  # default: -10%
+  ok: -5%
+
+# configure individual comparators
+# see list below for available comparators - use exact names as yaml keys
+# by default all comparators run if they detect their content is present
+comparators:
+  # set a comparator "false" to disable it
+  git: false
+  # customize comparator
+  node_modules:
+    # specific limits
+    # same options as for the "limits" at the root
+    limits:
+      fail: 10000000
+      warn: 9000000
+      ok: 1000000
+```
+
+## Comparators reference
+
+- [git](#git)
+- [node_modules](#node_modules)
+
+### git
+
+Compares the size of the git repository by measuring the `.git` folder. Useful to detect if large files are added to the repo.
+
+Name: `git`
+
+Trigger: Runs if a `.git` directory is found.
+
+Details: Shows the largest files (git objects) added in the PR:
+
+---
+Largest files in new changes:
+```
+710a7c687b06  2.8KiB lib/render.js
+0a8f1a2ddb4f  2.4KiB test/config.test.js
+6846cf298cd4  2.3KiB test/config.test.js
+a643d322cc26  1.5KiB lib/config.js
+933e4432aae5     73B .sizewatcher.yml
+6db7d5c27a66     69B .sizewatcher.yml
+```
+---
+
+### node_modules
+
+Compares the size increase of Node.js dependencies by measuring the size of the `node_modules` folder. Helps to prevent addition of needlessly large dependencies and slowing down npm install times.
+
+Name: `node_modules`
+
+Trigger: Runs if a `package.json` is found.
+
+Details: Prints the largest modules using [cost-of-modules](https://www.npmjs.com/package/cost-of-modules):
+
+---
+Largest node modules:
+```
+┌───────────────┬─────────────┬────────┐
+│ name          │ children    │ size   │
+├───────────────┼─────────────┼────────┤
+│ @octokit/rest │ 33          │ 11.25M │
+├───────────────┼─────────────┼────────┤
+│ js-yaml       │ 3           │ 0.72M  │
+├───────────────┼─────────────┼────────┤
+│ simple-git    │ 2           │ 0.24M  │
+├───────────────┼─────────────┼────────┤
+│ tmp           │ 13          │ 0.22M  │
+├───────────────┼─────────────┼────────┤
+│ debug         │ 1           │ 0.08M  │
+├───────────────┼─────────────┼────────┤
+│ deepmerge     │ 0           │ 0.03M  │
+├───────────────┼─────────────┼────────┤
+│ require-dir   │ 0           │ 0.02M  │
+├───────────────┼─────────────┼────────┤
+│ du            │ 1           │ 0.01M  │
+├───────────────┼─────────────┼────────┤
+│ pretty-bytes  │ 0           │ 0.01M  │
+├───────────────┼─────────────┼────────┤
+│ 9 modules     │ 34 children │ 4.57M  │
+└───────────────┴─────────────┴────────┘
+```
+
+---
+
+## Contribute
+
+Contributions are welcome! Read the [Contributing Guide](./.github/CONTRIBUTING.md) for general guidelines.
+
+### New comparator
+
+If you want to add a new automatic comparator for language X or dependency manager Y, follow these steps:
+
+1. [search issues](https://github.com/adobe/sizewatcher/issues?q=is%3Aissue+comparator+label%3Aenhancement+) for any existing similar comparators being discussed
+2. if not, create a new issue
+3. fork this repo
+4. under [lib/comparators](lib/comparators) add your new comparator, say `superduper.js`
+5. must export an object with these functions:
+
+   ```js
+   module.exports = {
+
+       shouldRun: async function(directory) {
+           // return true if it should run for the given directory, otherwise false to skip
+           // use to automatically detect language, package manager etc.
+           return true;
+       },
+
+       compare: async function(before, after) {
+           // measure differences between before (base branch) and after (pull request)
+           // before and after are objects with
+           // - `dir`: directory
+           // - `branch`: name of the branch
+           // - `sha`: (only on "after") commit sha of the PR currently being looked at
+
+           // return an object with
+           // - `beforeSize`: size of the before state
+           // - `afterSize`: size of the after state
+           // - `detailsLabel`: custom label for the details section (shown in expanded section on PR comment)
+           // - `details`: text with custom details on the after state (largest files etc)
+           return {
+               beforeSize: 100
+               afterSize: 200
+               detailsLabel: "Largest files in new changes",
+               details: "... details"
+           }
+       }
+   }
+   ```
+6. test and validate
+7. create PR
 
 ## Licensing
 
