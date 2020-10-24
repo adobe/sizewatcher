@@ -4,4 +4,4 @@ report:
   githubStatus: true
 
 limits:
-  fail: 400000
+  fail: 400KB
