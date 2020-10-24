@@ -6,24 +6,18 @@
 [![Github Actions Node.js CI Status](https://github.com/adobe/sizewatcher/workflows/Node.js%20CI/badge.svg)](https://github.com/adobe/sizewatcher/actions?query=workflow%3A%22Node.js+CI%22)
 [![CodeQL Status](https://github.com/adobe/sizewatcher/workflows/CodeQL/badge.svg)](https://github.com/adobe/sizewatcher/actions?query=workflow%3ACodeQL)
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=2 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
+- [Standard behavior](#standard-behavior)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
 - [CI Setup](#ci-setup)
-  - [Github Actions](#github-actions)
-  - [Travis CI](#travis-ci)
-  - [CircleCI](#circleci)
-  - [Other CIs](#other-cis)
 - [Configuration](#configuration)
 - [Comparators reference](#comparators-reference)
-  - [git](#git)
-  - [node_modules](#node_modules)
 - [Contribute](#contribute)
-  - [New comparator](#new-comparator)
 - [Licensing](#licensing)
 
 <!-- /code_chunk_output -->
@@ -36,15 +30,9 @@
 - sudden increase in build artifact size
 - etc.
 
-`sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded.
+Currently supported are git repository size itself, Node.js/npm modules and measuring any custom files or folders - see [Comparators reference](#comparators-reference). More built-in languages & options are possible in the future.
 
-Currently supported:
-
-- Node.js/npm `node_modules` size
-- `git` repository size
-- _more languages & options possible in the future_
-
-This is an example of a Github PR comment:
+`sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded. This is an example of a Github PR comment:
 
 ---
 
@@ -113,16 +101,21 @@ comparators: {}
 
 ---
 
+## Standard behavior
+
 By default `sizewatcher` will
+- checkout the before and after branch versions in temporary directories
+- go through all [comparators](#comparators-reference) that apply
+- measure the sizes, compare and report
+  - fail ❌ at a 50%+ increase
+  - warn ⚠️ at a 10%+ increase
+  - report ok ✅ if the size does not change by +/-10%
+  - cheer 🎉 if there is a 10% decrease
+- print result in cli output
 - report result as PR comment
 - not set a commit status
   - as this will block the PR if it fails
   - opt-in using `report.githubStatus: true`, see [Configuration](#configuration) below
-- fail ❌ at a 50%+ increase
-- warn ⚠️ at a 10%+ increase
-- report ok ✅ if the size does not change by +/-10%
-- cheer 🎉 if there is a 10% decrease
-
 
 ## Requirements
 
@@ -209,6 +202,11 @@ sizewatcher before after
 ```
 
 ## CI Setup
+
+- [Github Actions](#github-actions)
+- [Travis CI](#travis-ci)
+- [CircleCI](#circleci)
+- [Other CIs](#other-cis)
 
 To run `sizewatcher` in your CI, which is where it should run, it is best run using [npx](https://nodejs.dev/learn/the-npx-nodejs-package-runner), which comes pre-installed with nodejs and will automatically download and run the latest version in one go:
 
@@ -357,6 +355,7 @@ limits:
 comparators:
   # set a comparator "false" to disable it
   git: false
+
   # customize comparator
   node_modules:
     # specific limits
@@ -365,12 +364,28 @@ comparators:
       fail: 10000000
       warn: 9000000
       ok: 1000000
+
+  # custom comparator (only active if configured)
+  custom:
+    - name: my artifact
+      # path to file or folder whose size should be measured
+      # path must be relative to repo root
+      # comparator only runs if that path exists
+      path: build/artifact
+
+    # there can be multiple custom comparators
+    # name defaults to the path
+    - path: some_directory/
+      # limits can be configured as well
+      limits:
+        fail: 10000000
 ```
 
 ## Comparators reference
 
 - [git](#git)
 - [node_modules](#node_modules)
+- [custom](#custom)
 
 ### git
 
@@ -433,6 +448,51 @@ Largest node modules:
 ```
 
 ---
+
+### custom
+
+Compares the size of a custom file or folder.
+
+Name: `custom`
+
+Trigger: Runs if the path is found in either before or after version.
+
+Details: Shows the new file/folder size.
+
+---
+
+New size:
+
+```
+18.6 kB README.md
+```
+---
+
+Configuration:
+
+This comparator requires configuration in the `.sizewatcher.yml`:
+
+```yaml
+comparators:
+  custom:
+    path: build/artifact
+```
+
+To have multiple paths, with custom names:
+
+```yaml
+comparators:
+  custom:
+    - name: my artifact 1
+      path: build/artifact
+    - name: my artifact 2
+      path: build/artifact2
+```
+
+Options:
+- `path` (required) relative path to file or folder to measure
+- `name` (optional) custom label
+- `limits` can be set as usual
 
 ## Contribute
 
