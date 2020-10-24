@@ -6,24 +6,18 @@
 [![Github Actions Node.js CI Status](https://github.com/adobe/sizewatcher/workflows/Node.js%20CI/badge.svg)](https://github.com/adobe/sizewatcher/actions?query=workflow%3A%22Node.js+CI%22)
 [![CodeQL Status](https://github.com/adobe/sizewatcher/workflows/CodeQL/badge.svg)](https://github.com/adobe/sizewatcher/actions?query=workflow%3ACodeQL)
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=2 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
+- [Standard behavior](#standard-behavior)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
 - [CI Setup](#ci-setup)
-  - [Github Actions](#github-actions)
-  - [Travis CI](#travis-ci)
-  - [CircleCI](#circleci)
-  - [Other CIs](#other-cis)
 - [Configuration](#configuration)
 - [Comparators reference](#comparators-reference)
-  - [git](#git)
-  - [node_modules](#node_modules)
 - [Contribute](#contribute)
-  - [New comparator](#new-comparator)
 - [Licensing](#licensing)
 
 <!-- /code_chunk_output -->
@@ -36,15 +30,9 @@
 - sudden increase in build artifact size
 - etc.
 
-`sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded.
+Currently supported are git repository size itself and Node.js/npm modules - see [Comparators reference](#comparators-reference). More languages & options possible in the future.
 
-Currently supported:
-
-- Node.js/npm `node_modules` size
-- `git` repository size
-- _more languages & options possible in the future_
-
-This is an example of a Github PR comment:
+`sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded. This is an example of a Github PR comment:
 
 ---
 
@@ -113,6 +101,8 @@ comparators: {}
 
 ---
 
+## Standard behavior
+
 By default `sizewatcher` will
 - report result as PR comment
 - not set a commit status
@@ -122,7 +112,6 @@ By default `sizewatcher` will
 - warn ⚠️ at a 10%+ increase
 - report ok ✅ if the size does not change by +/-10%
 - cheer 🎉 if there is a 10% decrease
-
 
 ## Requirements
 
@@ -209,6 +198,11 @@ sizewatcher before after
 ```
 
 ## CI Setup
+
+- [Github Actions](#github-actions)
+- [Travis CI](#travis-ci)
+- [CircleCI](#circleci)
+- [Other CIs](#other-cis)
 
 To run `sizewatcher` in your CI, which is where it should run, it is best run using [npx](https://nodejs.dev/learn/the-npx-nodejs-package-runner), which comes pre-installed with nodejs and will automatically download and run the latest version in one go:
 
