@@ -331,9 +331,11 @@ Complete example and reference:
 ```yaml
 report:
   # to report a github commit status (will block PR if it fails)
-  githubStatus: true   # default: false
+  # default: false
+  githubStatus: true
   # to report a comment on the github PR
-  githubComment: false # default: true
+  # default: true
+  githubComment: false
 
 # global thresholds when to warn or fail a build
 # note that one failing or warning comparator is enough to fail or warn
@@ -511,8 +513,8 @@ If you want to add a new automatic comparator for language X or dependency manag
    ```js
    module.exports = {
 
-       shouldRun: async function(directory) {
-           // return true if it should run for the given directory, otherwise false to skip
+       shouldRun: async function(beforeDir, afterDir) {
+           // return true if it should run, otherwise false to skip
            // use to automatically detect language, package manager etc.
            return true;
        },
