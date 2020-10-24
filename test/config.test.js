@@ -132,7 +132,6 @@ comparators:
         });
         const cfg = config.reload();
         assert.strictEqual(typeof cfg, "object");
-        console.log(cfg.comparators);
         assert.ok(Array.isArray(cfg.comparators.custom));
         assert.strictEqual(cfg.comparators.custom[0].name, "mine");
         assert.strictEqual(cfg.comparators.custom[0].path, "build/file");
