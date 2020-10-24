@@ -30,7 +30,7 @@
 - sudden increase in build artifact size
 - etc.
 
-Currently supported are git repository size itself and Node.js/npm modules - see [Comparators reference](#comparators-reference). More languages & options possible in the future.
+Currently supported are git repository size itself, Node.js/npm modules and measuring any custom files or folders - see [Comparators reference](#comparators-reference). More built-in languages & options are possible in the future.
 
 `sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded. This is an example of a Github PR comment:
 
@@ -104,14 +104,18 @@ comparators: {}
 ## Standard behavior
 
 By default `sizewatcher` will
+- checkout the before and after branch versions in temporary directories
+- go through all [comparators](#comparators-reference) that apply
+- measure the sizes, compare and report
+  - fail ❌ at a 50%+ increase
+  - warn ⚠️ at a 10%+ increase
+  - report ok ✅ if the size does not change by +/-10%
+  - cheer 🎉 if there is a 10% decrease
+- print result in cli output
 - report result as PR comment
 - not set a commit status
   - as this will block the PR if it fails
   - opt-in using `report.githubStatus: true`, see [Configuration](#configuration) below
-- fail ❌ at a 50%+ increase
-- warn ⚠️ at a 10%+ increase
-- report ok ✅ if the size does not change by +/-10%
-- cheer 🎉 if there is a 10% decrease
 
 ## Requirements
 
@@ -351,6 +355,7 @@ limits:
 comparators:
   # set a comparator "false" to disable it
   git: false
+
   # customize comparator
   node_modules:
     # specific limits
@@ -359,12 +364,27 @@ comparators:
       fail: 10000000
       warn: 9000000
       ok: 1000000
+
+  # custom comparator (only active if configured)
+  custom:
+    - name: my artifact
+      # path to file or folder whose size should be measured (absolute or relative)
+      # comparator only runs if that path exists
+      path: build/artifact
+
+    # there can be multiple custom comparators
+    # name defaults to the path
+    - path: some_directory/
+      # limits can be configured as well
+      limits:
+        fail: 10000000
 ```
 
 ## Comparators reference
 
 - [git](#git)
 - [node_modules](#node_modules)
+- [custom](#custom)
 
 ### git
 
@@ -426,6 +446,19 @@ Largest node modules:
 └───────────────┴─────────────┴────────┘
 ```
 
+---
+
+### custom
+
+Compares the size of a custom file or folder.
+
+Name: `custom`
+
+Trigger: Runs if the path is found in either before or after version.
+
+Details: Shows the file size or largest files in folder.
+
+---
 ---
 
 ## Contribute
