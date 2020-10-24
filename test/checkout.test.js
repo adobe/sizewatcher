@@ -58,16 +58,19 @@ describe("checkout", function() {
     });
 
     it("handles travis checkouts", async function() {
+        process.env.CI = "true";
         process.env.TRAVIS = true;
         await run("test/checkout/travis");
     });
 
     it("handles circleci checkouts", async function() {
+        process.env.CI = "true";
         process.env.CIRCLECI = true;
         await run("test/checkout/circleci");
     });
 
     it("handles github action checkouts", async function() {
+        process.env.CI = "true";
         process.env.GITHUB_ACTIONS = true;
         await run("test/checkout/githubactions");
     });
