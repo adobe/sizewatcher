@@ -101,4 +101,41 @@ report:
 comparators: {}
 `);
     });
+
+    it("handles a single custom comparators", function() {
+        mockFs({
+            ".sizewatcher.yml":
+`
+comparators:
+  custom:
+    name: mine
+    path: build/file
+`
+        });
+        const cfg = config.reload();
+        assert.strictEqual(typeof cfg, "object");
+        assert.strictEqual(typeof cfg.comparators.custom, "object");
+        assert.strictEqual(cfg.comparators.custom.name, "mine");
+        assert.strictEqual(cfg.comparators.custom.path, "build/file");
+    });
+
+    it("handles a multiple custom comparators", function() {
+        mockFs({
+            ".sizewatcher.yml":
+`
+comparators:
+  custom:
+    - name: mine
+      path: build/file
+    - path: build/file2
+`
+        });
+        const cfg = config.reload();
+        assert.strictEqual(typeof cfg, "object");
+        console.log(cfg.comparators);
+        assert.ok(Array.isArray(cfg.comparators.custom));
+        assert.strictEqual(cfg.comparators.custom[0].name, "mine");
+        assert.strictEqual(cfg.comparators.custom[0].path, "build/file");
+        assert.strictEqual(cfg.comparators.custom[1].path, "build/file2");
+    });
 });
