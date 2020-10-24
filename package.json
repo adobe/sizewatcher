@@ -1,20 +1,29 @@
 {
   "name": "@adobe/sizewatcher",
   "version": "1.0.0",
-  "description": "Warns if your PRs increase your projects footprint.",
+  "description": "Warns if your pull requests introduce large size increases.",
   "main": "index.js",
   "bin": {
     "sizewatcher": "./index.js"
   },
+  "author": "Adobe",
+  "license": "Apache-2.0",
+  "repository": "adobe/sizewatcher",
+  "keywords": [
+    "size",
+    "check",
+    "watch",
+    "ci",
+    "continuous",
+    "integration",
+    "pull-request"
+  ],
   "scripts": {
     "test": "nyc -r=text -r=lcov mocha",
     "posttest": "eslint .",
     "report-coverage": "nyc report --reporter=text-lcov | coveralls",
     "sizewatcher": "DEBUG=sizewatcher* node ./index.js"
   },
-  "author": "Adobe",
-  "license": "Apache-2.0",
-  "repository": "adobe/sizewatcher",
   "devDependencies": {
     "@adobe/eslint-config-asset-compute": "^1.3.0",
     "coveralls": "^3.1.0",
