@@ -4,6 +4,9 @@
 
 Improvements:
 
+- [#33](https://github.com/adobe/sizewatcher/issues/33) Support `script` option in custom comparator. This allows to run build steps in case the output of those needs to be measured. The `path` option now also supports glob patterns.
+
+
 - [#31](https://github.com/adobe/sizewatcher/issues/31) Change default limits to make them less aggressive:
   - fail: `100%`
   - warn: `30%`

@@ -10,7 +10,7 @@
 
 <!-- code_chunk_output -->
 
-- [Standard behavior](#standard-behavior)
+- [How it works](#how-it-works)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -101,7 +101,7 @@ comparators: {}
 
 ---
 
-## Standard behavior
+## How it works
 
 By default `sizewatcher` will
 - checkout the before and after branch versions in temporary directories
@@ -121,6 +121,8 @@ By default `sizewatcher` will
 
 - [Nodejs](https://nodejs.org) version 10+
   - recommended to use latest stable version "LTS"
+- Github or Github Enterprise
+  - if you want to run it on pull requests
 - CI system running on Github pull requests
   - [Github Actions](https://github.com/features/actions) (simplest setup)
   - [Travis CI](https://travis-ci.org)
@@ -203,18 +205,25 @@ sizewatcher before after
 
 ## CI Setup
 
+- [CI Overview](#ci-overview)
 - [Github Actions](#github-actions)
 - [Travis CI](#travis-ci)
 - [CircleCI](#circleci)
 - [Other CIs](#other-cis)
 
-To run `sizewatcher` in your CI, which is where it should run, it is best run using [npx](https://nodejs.dev/learn/the-npx-nodejs-package-runner), which comes pre-installed with nodejs and will automatically download and run the latest version in one go:
+### CI Overview
+
+#### Run using npx
+
+To run `sizewatcher` in your CI, which is where it needs to run automatically for checking pull requests, it is best run using [npx](https://nodejs.dev/learn/the-npx-nodejs-package-runner), which comes pre-installed with nodejs and will automatically download and run the latest version in one go:
 
 ```
 npx @adobe/sizewatcher
 ```
 
-Depending on the CI, branches of the pull request are automatically detected. Last but not least, to be able to automatically comment on the PR or report a commit status, a **github token** must be set as environment variable:
+#### GITHUB_TOKEN
+
+To be able to automatically comment on the PR or report a commit status, a **github token** must be set as environment variable:
 
 ```
 GITHUB_TOKEN=....
@@ -222,6 +231,19 @@ GITHUB_TOKEN=....
 
 This token should be a service/bot user that has read/pull permission on the repository (allowing to comment). Note that the comments will be shown under that user's name. For example, you might want to create a user named `sizewatcher-bot` or the like. With Github Actions this is not required, it has a built-in `github-actions` bot user.
 
+#### GITHUB_API_URL
+
+If you use Github Enterprise, set the custom [Github API URL](https://docs.github.com/en/enterprise-server@2.21/rest/reference/enterprise-admin) in the `GITHUB_API_URL` environment variable:
+
+```
+GITHUB_API_URL=https://mygithub.company.com/api/v3/
+```
+
+This is not required for public github.com.
+
+#### Order of steps
+
+You can run `sizewatcher` before, after or in parallel to your main build step. It does not rely on output of a build, since it will check out the code (before and after PR versions) separately and needs to run any build steps itself, such as using `script` in the [custom comparator](#custom).
 
 See below for CI specific setup.
 
@@ -245,8 +267,6 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '14'
-    # run your build/test first in case you want to measure build results
-    - run: npm install && npm test
     # ---------- this runs sizewatcher ------------
     - run: npx @adobe/sizewatcher
       env:
@@ -258,7 +278,7 @@ jobs:
 For [Travis CI](https://travis-ci.org) you need to
 - use `language: node_js`
   - if you already use a different language, find a way to ensure Nodejs 10+ is installed
-- under `script` run `npx @adobe/sizewatcher`, typically after your main build or test
+- under `script` run `npx @adobe/sizewatcher`
 - set a secret environment variable `GITHUB_TOKEN` in the [Travis repository settings](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with a github token with permission to comment on PRs and reporting commit statuses for the repository
 
 Example `.travis.yml`:
@@ -270,8 +290,6 @@ install:
   - npm install
 
 script:
-  # run your build/test first in case you want to measure build results
-  - npm test
   # ---------- this runs sizewatcher ------------
   - npx @adobe/sizewatcher
 ```
@@ -281,7 +299,7 @@ script:
 For [CircleCI](https://circleci.com) you need to
 - use a docker image with Nodejs 10+ installed
   - alternatively install [using nvm](https://www.google.com/search?q=circleci+use+nvm)
-- run `npx @adobe/sizewatcher`, typically after your main build or test
+- run `npx @adobe/sizewatcher`
 - set a secret environment variable `GITHUB_TOKEN` in the [CircleCI project settings](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-project) (or in a [Context](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-context)) with a github token with permission to comment on PRs and reporting commit statuses for the repository
 
 Example `.circleci/config.yml`:
@@ -295,10 +313,6 @@ jobs:
       - image: circleci/node:14
     steps:
       - checkout
-
-      # run your build/test first in case you want to measure build results
-      - run: npm install
-      - run: npm test
 
       # ---------- this runs sizewatcher ------------
       - run: npx @adobe/sizewatcher
@@ -316,7 +330,7 @@ Set these environment variables in the CI job:
 - `GITHUB_HEAD_REF` name of the branch of the pull request
 - `GITHUB_TOKEN` a github token with permission to comment on PRs and reporting commit statuses for the repository. This is a credential so use the proper CI credential management and never check this into the git repository!
 
-After your build or in parallel, run
+Then simply run
 
 ```
 npx @adobe/sizewatcher
@@ -379,7 +393,10 @@ comparators:
 
     # there can be multiple custom comparators
     # name defaults to the path
-    - path: some_directory/
+    # path can include glob patterns
+    - path: "artifact-*.tgz"
+      # run some custom build command before measuring
+      script: npm install
       # limits can be configured as well
       limits:
         fail: 10 MB
@@ -479,7 +496,16 @@ This comparator requires configuration in the `.sizewatcher.yml`:
 ```yaml
 comparators:
   custom:
-    path: build/artifact
+    path: src/somefile
+```
+
+If a build step is required first, use `script`:
+
+```yaml
+comparators:
+  custom:
+    path: "build/artifact-*.tgz"
+    script: npm run build
 ```
 
 To have multiple paths, with custom names:
@@ -488,14 +514,15 @@ To have multiple paths, with custom names:
 comparators:
   custom:
     - name: my artifact 1
-      path: build/artifact
+      path: "build/artifact"
     - name: my artifact 2
-      path: build/artifact2
+      path: "build/artifact2"
 ```
 
 Options:
-- `path` (required) relative path to file or folder to measure
+- `path` (required) relative path to file or folder to measure; supports [glob patterns](https://www.npmjs.com/package/glob). make sure to use quotes in the yaml if you use glob patterns
 - `name` (optional) custom label
+- `script` (optional) shell command to run before measuring `path`
 - `limits` can be set as usual
 
 ## Contribute
