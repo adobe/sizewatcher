@@ -27,8 +27,8 @@ describe("config", function() {
         const cfg = config.reload();
         assert.strictEqual(typeof cfg, "object");
         assert.deepStrictEqual(cfg.limits, {
-            fail: "50%",
-            warn: "10%",
+            fail: "100%",
+            warn: "30%",
             ok: "-10%"
         });
         assert.ok(cfg.report.githubComment);
@@ -48,7 +48,7 @@ limits:
         assert.strictEqual(typeof cfg, "object");
         assert.deepStrictEqual(cfg.limits, {
             fail: "42%",
-            warn: "10%",
+            warn: "30%",
             ok: "-10%"
         });
     });
@@ -92,8 +92,8 @@ report:
         config.reload();
         const yaml = config.asYaml();
         assert.strictEqual(yaml, `limits:
-  fail: 50%
-  warn: 10%
+  fail: 100%
+  warn: 30%
   ok: '-10%'
 report:
   githubComment: true

@@ -90,8 +90,8 @@ Largest node modules:
 - Configuration
 <pre>
 limits:
-  fail: 50%
-  warn: 10%
+  fail: 100%
+  warn: 30%
   ok: '-10%'
 report:
   githubComment: true
@@ -107,9 +107,9 @@ By default `sizewatcher` will
 - checkout the before and after branch versions in temporary directories
 - go through all [comparators](#comparators-reference) that apply
 - measure the sizes, compare and report
-  - fail ❌ at a 50%+ increase
-  - warn ⚠️ at a 10%+ increase
-  - report ok ✅ if the size does not change by +/-10%
+  - fail ❌ at a 100%+ increase
+  - warn ⚠️ at a 30%+ increase
+  - report ok ✅ if the size change is between -10 and +30%
   - cheer 🎉 if there is a 10% decrease
 - print result in cli output
 - report result as PR comment
@@ -345,10 +345,10 @@ report:
 #   see https://www.npmjs.com/package/xbytes
 # - absolute limit, as byte number: 1000000
 limits:
-  # when to fail - default: 50%
+  # when to fail - default: 100%
   fail: 50%
-  # when to warn - default: 10%
-  warn: 30%
+  # when to warn - default: 30%
+  warn: 10%
   # below the ok limit you will get a cheers for making it notably smaller
   # default: -10%
   ok: -5%
