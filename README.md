@@ -32,63 +32,27 @@
 
 Currently supported are git repository size itself, Node.js/npm modules and measuring any custom files or folders - see [Comparators reference](#comparators-reference). More built-in languages & options are possible in the future.
 
-`sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded. This is an example of a Github PR comment:
+`sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded.
+
+This is an example of a Github PR comment with a failure (ignore the small numbers):
 
 ---
 
-📈 [Sizewatcher](https://github.com/adobe/sizewatcher) measured these changes:
+<details open><summary>❌ <a href="https://github.com/adobe/sizewatcher">Sizewatcher</a> detected a problematic size increase 📈:</summary>
+<p><blockquote>
 
-<details>
-<summary>✅ <code>git</code> <b>+0.2%</b> (246 kB => 247 kB)</summary>
-<br>
+<details><summary>❌ <code>git</code> <b>+97.9%</b> (186 kB => 368 kB)</summary><br>Largest files in new changes:<pre>ecaf42b1d55c  4.5KiB lib/report.js<br>9c1a82fa7efb  2.8KiB lib/render.js<br>710a7c687b06  2.8KiB lib/render.js<br>e7a5a58b23a6  2.7KiB test/config.test.js<br>0a8f1a2ddb4f  2.4KiB test/config.test.js<br>6846cf298cd4  2.3KiB test/config.test.js<br>461b7663fd23  1.6KiB lib/config.js<br>a643d322cc26  1.5KiB lib/config.js<br>6db7d5c27a66     69B .sizewatcher.yml</pre></details>
 
-Largest files in new changes:
-```
-360cccafa87c    974B .npmignore
-```
-</details>
+<details><summary>✅ <code>node_modules</code> <b>-6.1%</b> (42.5 MB => 39.9 MB)</summary><br>Largest node modules:<pre>┌───────────────┬─────────────┬────────┐<br>│ name          │ children    │ size   │<br>├───────────────┼─────────────┼────────┤<br>│ @octokit/rest │ 33          │ 11.25M │<br>├───────────────┼─────────────┼────────┤<br>│ js-yaml       │ 3           │ 0.72M  │<br>├───────────────┼─────────────┼────────┤<br>│ simple-git    │ 2           │ 0.24M  │<br>├───────────────┼─────────────┼────────┤<br>│ tmp           │ 13          │ 0.22M  │<br>├───────────────┼─────────────┼────────┤<br>│ debug         │ 1           │ 0.08M  │<br>├───────────────┼─────────────┼────────┤<br>│ deepmerge     │ 0           │ 0.03M  │<br>├───────────────┼─────────────┼────────┤<br>│ require-dir   │ 0           │ 0.02M  │<br>├───────────────┼─────────────┼────────┤<br>│ du            │ 1           │ 0.01M  │<br>├───────────────┼─────────────┼────────┤<br>│ pretty-bytes  │ 0           │ 0.01M  │<br>├───────────────┼─────────────┼────────┤<br>│ 9 modules     │ 34 children │ 4.57M  │<br>└───────────────┴─────────────┴────────┘</pre></details>
 
-<details>
-<summary>✅ <code>node_modules</code> has no changes (46.8 MB)</summary>
-<br>
+<details><summary>Notes</summary><br>
 
-Largest node modules:
-```
-┌───────────────┬─────────────┬────────┐
-│ name          │ children    │ size   │
-├───────────────┼─────────────┼────────┤
-│ @octokit/rest │ 33          │ 11.25M │
-├───────────────┼─────────────┼────────┤
-│ js-yaml       │ 3           │ 0.72M  │
-├───────────────┼─────────────┼────────┤
-│ simple-git    │ 2           │ 0.24M  │
-├───────────────┼─────────────┼────────┤
-│ tmp           │ 13          │ 0.22M  │
-├───────────────┼─────────────┼────────┤
-│ debug         │ 1           │ 0.08M  │
-├───────────────┼─────────────┼────────┤
-│ deepmerge     │ 0           │ 0.03M  │
-├───────────────┼─────────────┼────────┤
-│ require-dir   │ 0           │ 0.02M  │
-├───────────────┼─────────────┼────────┤
-│ du            │ 1           │ 0.01M  │
-├───────────────┼─────────────┼────────┤
-│ pretty-bytes  │ 0           │ 0.01M  │
-├───────────────┼─────────────┼────────┤
-│ 9 modules     │ 34 children │ 4.57M  │
-└───────────────┴─────────────┴────────┘
-```
-</details>
-
-<details>
-<summary>Notes</summary>
-<br>
-
-- PR branch: `docs` @ 15626a050330492da8b745dadb4f5d304b670e83
+- PR branch: `testconfig` @ 21b66dfe6c3f6d09d4929ea2dec1e62cd1a7e7f2
 - Base branch: `main`
 - Sizewatcher v1.0.0
-- Configuration
-<pre>
+- Effective Configuration:
+
+```yaml
 limits:
   fail: 100%
   warn: 30%
@@ -96,8 +60,51 @@ limits:
 report:
   githubComment: true
   githubStatus: false
+comparators:
+  git:
+    limits:
+      fail: 50%
+  custom: null
+```
+</details>
+
+</blockquote></p>
+</details>
+
+---
+
+And here if everything is great:
+
+---
+
+<details ><summary>✅ <a href="https://github.com/adobe/sizewatcher">Sizewatcher</a> found no problematic size increases.</summary>
+<p><blockquote>
+
+<details><summary>✅ <code>git</code> <b>+97.9%</b> (186 kB => 368 kB)</summary><br>Largest files in new changes:<pre>ecaf42b1d55c  4.5KiB lib/report.js<br>9c1a82fa7efb  2.8KiB lib/render.js<br>710a7c687b06  2.8KiB lib/render.js<br>e7a5a58b23a6  2.7KiB test/config.test.js<br>0a8f1a2ddb4f  2.4KiB test/config.test.js<br>6846cf298cd4  2.3KiB test/config.test.js<br>461b7663fd23  1.6KiB lib/config.js<br>a643d322cc26  1.5KiB lib/config.js<br>6db7d5c27a66     69B .sizewatcher.yml</pre></details>
+
+<details><summary>✅ <code>node_modules</code> <b>-6.1%</b> (42.5 MB => 39.9 MB)</summary><br>Largest node modules:<pre>┌───────────────┬─────────────┬────────┐<br>│ name          │ children    │ size   │<br>├───────────────┼─────────────┼────────┤<br>│ @octokit/rest │ 33          │ 11.25M │<br>├───────────────┼─────────────┼────────┤<br>│ js-yaml       │ 3           │ 0.72M  │<br>├───────────────┼─────────────┼────────┤<br>│ simple-git    │ 2           │ 0.24M  │<br>├───────────────┼─────────────┼────────┤<br>│ tmp           │ 13          │ 0.22M  │<br>├───────────────┼─────────────┼────────┤<br>│ debug         │ 1           │ 0.08M  │<br>├───────────────┼─────────────┼────────┤<br>│ deepmerge     │ 0           │ 0.03M  │<br>├───────────────┼─────────────┼────────┤<br>│ require-dir   │ 0           │ 0.02M  │<br>├───────────────┼─────────────┼────────┤<br>│ du            │ 1           │ 0.01M  │<br>├───────────────┼─────────────┼────────┤<br>│ pretty-bytes  │ 0           │ 0.01M  │<br>├───────────────┼─────────────┼────────┤<br>│ 9 modules     │ 34 children │ 4.57M  │<br>└───────────────┴─────────────┴────────┘</pre></details>
+
+<details><summary>Notes</summary><br>
+
+- PR branch: `testconfig` @ 21b66dfe6c3f6d09d4929ea2dec1e62cd1a7e7f2
+- Base branch: `main`
+- Sizewatcher v1.0.0
+- Effective Configuration:
+
+```yaml
+limits:
+  fail: 100%
+  warn: 200%
+  ok: '-10%'
+report:
+  githubComment: true
+  githubStatus: false
 comparators: {}
-</pre></details>
+```
+</details>
+
+</blockquote></p>
+</details>
 
 ---
 
