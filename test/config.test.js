@@ -36,6 +36,22 @@ describe("config", function() {
         assert.strictEqual(typeof cfg.comparators, "object");
     });
 
+    it("loads config file that is empty", function() {
+        mockFs({
+            ".sizewatcher.yml": ""
+        });
+        const cfg = config.reload();
+        assert.strictEqual(typeof cfg, "object");
+        assert.deepStrictEqual(cfg.limits, {
+            fail: "100%",
+            warn: "30%",
+            ok: "-10%"
+        });
+        assert.ok(cfg.report.githubComment);
+        assert.ok(!cfg.report.githubStatus);
+        assert.strictEqual(typeof cfg.comparators, "object");
+    });
+
     it("loads config file with percentage limits", function() {
         mockFs({
             ".sizewatcher.yml":
