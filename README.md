@@ -28,7 +28,6 @@
 - addition of large dependencies (and transient dependency trees)
 - accidental addition of large binary files to the git repository
 - sudden increase in build artifact size
-- etc.
 
 Currently supported are git repository size itself, Node.js/npm modules and measuring any custom files or folders - see [Comparators reference](#comparators-reference). More built-in languages & options are possible in the future.
 
@@ -413,6 +412,7 @@ comparators:
 
 - [git](#git)
 - [node_modules](#node_modules)
+- [npm_package](#npm_package)
 - [custom](#custom)
 
 ### git
@@ -473,6 +473,48 @@ Largest node modules:
 ├───────────────┼─────────────┼────────┤
 │ 9 modules     │ 34 children │ 4.57M  │
 └───────────────┴─────────────┴────────┘
+```
+
+---
+
+### npm_package
+
+Compares the size of an npm package tarball by running `npm publish --dry-run`.
+
+Name: `npm_package`
+
+Trigger: Runs if a `package.json` is found.
+
+Details: Prints the package contents and metadata using the output of `npm publish --dry-run`.
+
+---
+Package contents:
+
+```
+📦  @adobe/sizewatcher@1.0.0
+=== Tarball Contents ===
+11.3kB LICENSE
+4.8kB  lib/checkout.js
+5.2kB  lib/compare.js
+1.7kB  lib/config.js
+3.9kB  lib/comparators/custom.js
+2.3kB  lib/comparators/git.js
+2.6kB  lib/github.js
+2.1kB  index.js
+2.2kB  lib/comparators/node_modules.js
+3.9kB  lib/render.js
+4.6kB  lib/report.js
+1.1kB  package.json
+695B   CHANGELOG.md
+23.9kB README.md
+=== Tarball Details ===
+name:          @adobe/sizewatcher
+version:       1.0.0
+package size:  18.6 kB
+unpacked size: 70.3 kB
+shasum:        80846caccca2194f3dd1122e8113206e20c202dc
+integrity:     sha512-c3VjMQQvqcqN8[...]ybMS6kg2chjpA==
+total files:   14
 ```
 
 ---

@@ -16,9 +16,12 @@
 
 // index.js - main cli entry point
 
+const debug = require("debug")("sizewatcher");
 const gitCheckoutBeforeAndAfter = require("./lib/checkout");
 const compare = require("./lib/compare");
 const report = require("./lib/report");
+const path = require("path");
+const fs = require("fs");
 
 function printUsage() {
     console.log(`Usage: ${process.argv[1]} [<options>] [<before> [<after>]]`);
@@ -40,6 +43,10 @@ async function main(argv) {
             process.exit(1);
         }
 
+        if (!fs.existsSync(path.join(process.cwd(), ".git"))) {
+            throw new Error(`Not inside the root of a git checkout: ${process.cwd()}`);
+        }
+
         // TODO: detect main = main case
 
         console.log(`Cloning git repository...`);
@@ -52,7 +59,8 @@ async function main(argv) {
         await report(deltas);
 
     } catch (e) {
-        console.error(e);
+        debug(e);
+        console.error("Error:", e.message || e);
         process.exit(1);
     } finally {
         console.log("Done. Cleaning up...");
