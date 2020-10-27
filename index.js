@@ -47,8 +47,6 @@ async function main(argv) {
             throw new Error(`Not inside the root of a git checkout: ${process.cwd()}`);
         }
 
-        // TODO: detect main = main case
-
         console.log(`Cloning git repository...`);
         const { before, after } = await gitCheckoutBeforeAndAfter(process.cwd(), argv[0], argv[1]);
 
