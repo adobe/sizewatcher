@@ -24,7 +24,7 @@ const path = require("path");
 const fs = require("fs");
 
 function printUsage() {
-    console.log(`Usage: ${process.argv[1]} [<options>] [<before> [<after>]]`);
+    console.log(`Usage: sizewatcher [<options>] [<before> [<after>]]`);
     console.log();
     console.log("Arguments:");
     console.log("  <before>   Before branch/commit for comparison. Defaults to default branch or main/master.");
@@ -47,10 +47,13 @@ async function main(argv) {
             throw new Error(`Not inside the root of a git checkout: ${process.cwd()}`);
         }
 
-        // TODO: detect main = main case
-
-        console.log(`Cloning git repository...`);
+        console.log(`Checking out git branches...`);
         const { before, after } = await gitCheckoutBeforeAndAfter(process.cwd(), argv[0], argv[1]);
+
+        if (before.branch === after.branch) {
+            console.log(`Branches are identical, nothing to compare (${before.branch}=${after.branch}). Compare selected branches using 'sizewatcher <before> <after>'.`);
+            process.exit();
+        }
 
         console.log(`Comparing changes from '${before.branch}' to '${after.branch}'\n`);
 
