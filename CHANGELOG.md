@@ -2,6 +2,10 @@
 
 ## 1.1.0
 
+New Comparators:
+
+- [#14](https://github.com/adobe/sizewatcher/issues/14) npm package size
+
 Improvements:
 
 - [#32](https://github.com/adobe/sizewatcher/issues/32) Improved PR comment that can be collapsed as whole, shows the summary result and is collapsed by default if the result is ok.
