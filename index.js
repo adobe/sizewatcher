@@ -24,7 +24,7 @@ const path = require("path");
 const fs = require("fs");
 
 function printUsage() {
-    console.log(`Usage: ${process.argv[1]} [<options>] [<before> [<after>]]`);
+    console.log(`Usage: sizewatcher [<options>] [<before> [<after>]]`);
     console.log();
     console.log("Arguments:");
     console.log("  <before>   Before branch/commit for comparison. Defaults to default branch or main/master.");
