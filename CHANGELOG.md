@@ -1,8 +1,10 @@
 # Changelog
 
-## 1.0.1
+## 1.1.0
 
 Improvements:
+
+- [#32](https://github.com/adobe/sizewatcher/issues/32) Improved PR comment that can be collapsed as whole, shows the summary result and is collapsed by default if the result is ok.
 
 - [#33](https://github.com/adobe/sizewatcher/issues/33) Support `script` option in custom comparator. This allows to run build steps in case the output of those needs to be measured. The `path` option now also supports glob patterns.
 
