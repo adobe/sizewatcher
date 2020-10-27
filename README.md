@@ -29,11 +29,11 @@
 - accidental addition of large binary files to the git repository
 - sudden increase in build artifact size
 
-Currently supported are git repository size itself, Node.js/npm modules and measuring any custom files or folders - see [Comparators reference](#comparators-reference). More built-in languages & options are possible in the future.
+While any custom file or folder path can be measured via configuration, various types are automatically measured, including git repository, Node module dependencies and npm package size - see [comparators reference](#comparators-reference). More built-in languages & options are added over time and [contributions are welcome](#new-comparator).
 
 `sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded.
 
-This is an example of a Github PR comment with a failure (ignore the small numbers):
+This is an example of a `sizewatcher` Github PR comment with a failure (ignore the small numbers):
 
 ---
 
@@ -72,7 +72,7 @@ comparators:
 
 ---
 
-And here if everything is great:
+And here if everything looks good:
 
 ---
 
@@ -225,6 +225,12 @@ To run `sizewatcher` in your CI, which is where it needs to run automatically fo
 
 ```
 npx @adobe/sizewatcher
+```
+
+This command will always use the latest published version. In some cases it might be (temporarily) desireable to stick to a certain version, which can be achieved using:
+
+```
+npx @adobe/sizewatcher@1.0.0
 ```
 
 #### GITHUB_TOKEN
