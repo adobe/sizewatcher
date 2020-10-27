@@ -18,6 +18,8 @@ Improvements:
   - warn: `30%`
   - ok: `-10%` (same)
 
+- [#39](https://github.com/adobe/sizewatcher/issues/39) Detect if comparing the same branch and exit gracefully.
+
 
 ## 1.0.0
 
