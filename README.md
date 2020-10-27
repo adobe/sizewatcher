@@ -155,7 +155,7 @@ sizewatcher -h
 
 Help output:
 ```
-Usage: /usr/local/bin/sizewatcher [<options>] [<before> [<after>]]
+Usage: sizewatcher [<options>] [<before> [<after>]]
 
 Arguments:
   <before>   Before branch/commit for comparison. Defaults to default branch or main/master.
