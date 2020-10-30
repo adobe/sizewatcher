@@ -20,8 +20,6 @@ const debug = require("debug")("sizewatcher");
 const gitCheckoutBeforeAndAfter = require("./lib/checkout");
 const compare = require("./lib/compare");
 const report = require("./lib/report");
-const path = require("path");
-const fs = require("fs");
 const Git = require("simple-git/promise");
 
 function printUsage() {
