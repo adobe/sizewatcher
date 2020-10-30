@@ -22,6 +22,7 @@ const compare = require("./lib/compare");
 const report = require("./lib/report");
 const path = require("path");
 const fs = require("fs");
+const Git = require("simple-git/promise");
 
 function printUsage() {
     console.log(`Usage: sizewatcher [<options>] [<before> [<after>]]`);
@@ -43,8 +44,8 @@ async function main(argv) {
             process.exit(1);
         }
 
-        if (!fs.existsSync(path.join(process.cwd(), ".git"))) {
-            throw new Error(`Not inside the root of a git checkout: ${process.cwd()}`);
+        if (!await Git().checkIsRepo()) {
+            throw new Error(`Not inside a git checkout: ${process.cwd()}`);
         }
 
         console.log(`Checking out git branches...`);
