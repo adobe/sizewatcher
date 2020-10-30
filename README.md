@@ -395,6 +395,15 @@ comparators:
       warn: 9 MB
       ok: 1 MB
 
+  npm_package:
+    # `dir` is supported for all comparators that support it and
+    # specifies the relative directory inside the project inside which to run the comparator
+    dir: "sub/folder"
+    # can also be an array with multiple directories to check
+    dir:
+      - "sub/folder1"
+      - "folder2"
+
   # custom comparator (only active if configured)
   custom:
     - name: my artifact
@@ -481,6 +490,8 @@ Largest node modules:
 └───────────────┴─────────────┴────────┘
 ```
 
+Configuration: supports `dir`
+
 ---
 
 ### npm_package
@@ -522,6 +533,8 @@ shasum:        80846caccca2194f3dd1122e8113206e20c202dc
 integrity:     sha512-c3VjMQQvqcqN8[...]ybMS6kg2chjpA==
 total files:   14
 ```
+
+Configuration: supports `dir`
 
 ---
 
