@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.2.0
+
+Improvements:
+
+- [#41](https://github.com/adobe/sizewatcher/issues/41) Support project structures where package.json is in subdirectory. Introduces the `dir` config on comparators.
+
+Fixes:
+
+- [#46](https://github.com/adobe/sizewatcher/issues/46) Support running in a subdirectory of a git checkout.
+
+- [#43](https://github.com/adobe/sizewatcher/issues/43) `node_modules` comparator failed if there were no dependencies
+
+- [#42](https://github.com/adobe/sizewatcher/issues/42) `npm_package` failed if there was no version field in package.json
+
 ## 1.1.0
 
 New Comparators:
