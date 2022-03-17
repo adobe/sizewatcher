@@ -41,7 +41,7 @@
     "js-yaml": "^3.14.0",
     "pretty-bytes": "^5.3.0",
     "require-dir": "^1.2.0",
-    "simple-git": "^2.5.0",
+    "simple-git": "^3.3.0",
     "tmp": "^0.2.1",
     "xbytes": "^1.6.2"
   }
