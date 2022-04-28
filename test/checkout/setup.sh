@@ -4,14 +4,10 @@
 
 rm -rf build
 
-# custom template to use "main" as default branch
-mkdir -p build/template
-echo "ref: refs/heads/main" > build/template/HEAD
-
 mkdir -p build/remote
 cd build/remote
 # needed for git run in CI context where none of this is set
-git init --template ../template
+git init --initial-branch=main
 git config --local user.email "you@example.com"
 git config --local user.name "Your Name"
 
