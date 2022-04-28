@@ -54,6 +54,7 @@ describe("checkout", function() {
     });
 
     it("handles normal checkouts", async function() {
+        delete process.env.CI;
         await run("test/checkout/normal");
     });
 
