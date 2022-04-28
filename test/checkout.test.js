@@ -13,21 +13,18 @@
 'use strict';
 
 const gitCheckoutBeforeAndAfter = require("../lib/checkout");
-const { execSync } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 const assert = require("assert");
 const Git = require("simple-git/promise");
-
-function exec(dir, command) {
-    execSync(command, {cwd: dir, stdio: 'inherit'});
-}
+const { enableMochaCaptureConsole, exec } = require("./mocha-capture-console");
+enableMochaCaptureConsole();
 
 async function run(dir) {
     // prepare
-    exec(dir, "../setup.sh");
+    await exec("../setup.sh", dir);
     const commitSha = fs.readFileSync(path.join(dir, "build", "commit.hash")).toString().trim();
-    exec(dir, `./checkout.sh ${commitSha}`);
+    await exec(`./checkout.sh ${commitSha}`, dir);
     const checkoutDir = path.join(dir, path.normalize("build/checkout"));
 
     // test checkout logic
@@ -43,7 +40,10 @@ async function run(dir) {
 
 describe("checkout", function() {
 
+    this.captureConsole = true;
+
     beforeEach(function() {
+        delete process.env.CI;
         delete process.env.GITHUB_ACTIONS;
         delete process.env.GITHUB_HEAD_REF;
         delete process.env.TRAVIS;

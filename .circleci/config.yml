@@ -13,8 +13,7 @@ version: 2
 jobs:
   build:
     docker:
-      # custom docker image with newer git (> 2.18) required for github actions test
-      - image: alexkli/circleci-node12
+      - image: cimg/node:lts
     steps:
       - checkout
 
