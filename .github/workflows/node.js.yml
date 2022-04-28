@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x, 16.x]
+        node-version: [10, 12, 14, 16, lts/*]
 
     steps:
     - uses: actions/checkout@v2
@@ -28,5 +28,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Coveralls
       uses: coverallsapp/github-action@master
+      if: ${{ matrix.node-version == 'lts/*' }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
