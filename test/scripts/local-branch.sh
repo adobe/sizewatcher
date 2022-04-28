@@ -2,6 +2,8 @@
 
 # checkout local branch but without remote branch
 
+git config --global init.defaultBranch main
+
 # setup new git repo
 git init
 # needed for git run in CI context where none of this is set
