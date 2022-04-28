@@ -8,6 +8,10 @@ cd build
 
 # setup new git repo
 git init
+# needed for git run in CI context where none of this is set
+git config --local user.email "you@example.com"
+git config --local user.name "Your Name"
+
 echo "hello" > file
 git add file
 git commit -a -m "initial commit"

@@ -10,9 +10,11 @@ echo "ref: refs/heads/main" > build/template/HEAD
 
 mkdir -p build/remote
 cd build/remote
+# needed for git run in CI context where none of this is set
 git init --template ../template
 git config --local user.email "you@example.com"
 git config --local user.name "Your Name"
+
 echo "hello" > file
 git add file
 git commit -a -m "initial commit"
