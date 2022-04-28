@@ -20,5 +20,7 @@ git commit -a -m "initial commit"
 git checkout -b new
 echo "hello2" > file
 
+unset GITHUB_BASE_REF
+
 # run sizewatcher
 DEBUG=sizewatcher* node ../../../index.js
