@@ -1,3 +1,5 @@
+TEST CHANGE
+
 [![Version](https://img.shields.io/npm/v/@adobe/sizewatcher.svg)](https://npmjs.org/package/@adobe/sizewatcher)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Coverage Status](https://coveralls.io/repos/github/adobe/sizewatcher/badge.svg)](https://coveralls.io/github/adobe/sizewatcher)
