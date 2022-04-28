@@ -16,7 +16,7 @@ const gitCheckoutBeforeAndAfter = require("../lib/checkout");
 const path = require("path");
 const fs = require("fs");
 const assert = require("assert");
-const Git = require("simple-git/promise");
+const Git = require("simple-git");
 const { enableMochaCaptureConsole, exec } = require("./mocha-capture-console");
 enableMochaCaptureConsole();
 
