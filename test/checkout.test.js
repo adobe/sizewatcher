@@ -44,6 +44,7 @@ async function run(dir) {
 describe("checkout", function() {
 
     beforeEach(function() {
+        delete process.env.CI;
         delete process.env.GITHUB_ACTIONS;
         delete process.env.GITHUB_HEAD_REF;
         delete process.env.TRAVIS;
@@ -54,7 +55,6 @@ describe("checkout", function() {
     });
 
     it("handles normal checkouts", async function() {
-        delete process.env.CI;
         await run("test/checkout/normal");
     });
 
