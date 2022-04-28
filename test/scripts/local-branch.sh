@@ -2,10 +2,6 @@
 
 # checkout local branch but without remote branch
 
-rm -rf build
-mkdir build
-cd build
-
 # setup new git repo
 git init
 # needed for git run in CI context where none of this is set
@@ -19,8 +15,3 @@ git commit -a -m "initial commit"
 # new local branch
 git checkout -b new
 echo "hello2" > file
-
-unset GITHUB_BASE_REF
-
-# run sizewatcher
-DEBUG=sizewatcher* node ../../../index.js

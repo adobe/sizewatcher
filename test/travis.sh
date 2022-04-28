@@ -12,8 +12,8 @@ cd adobe/sizewatcher ;
 git fetch origin +refs/pull/63/merge: ;
 git checkout -qf FETCH_HEAD ;
 nvm install 14 ;
-node --version ;
 npm install ;
+npm test ;
 npm run sizewatcher"'
 
 docker rm -f $BUILDID
