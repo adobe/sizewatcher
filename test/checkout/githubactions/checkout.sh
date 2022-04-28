@@ -3,6 +3,7 @@
 set -x
 
 # checkout like github actions
+# actions/checkout@v2 and v3
 
 cd build
 remote=$PWD/remote

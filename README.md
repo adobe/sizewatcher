@@ -10,7 +10,7 @@
 
 <!-- code_chunk_output -->
 
-- [Standard behavior](#standard-behavior)
+- [How it works](#how-it-works)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -28,88 +28,94 @@
 - addition of large dependencies (and transient dependency trees)
 - accidental addition of large binary files to the git repository
 - sudden increase in build artifact size
-- etc.
 
-Currently supported are git repository size itself, Node.js/npm modules and measuring any custom files or folders - see [Comparators reference](#comparators-reference). More built-in languages & options are possible in the future.
+While any custom file or folder path can be measured via configuration, various types are automatically measured, including git repository, Node module dependencies and npm package size - see [comparators reference](#comparators-reference). More built-in languages & options are added over time and [contributions are welcome](#new-comparator).
 
-`sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded. This is an example of a Github PR comment:
+`sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded.
+
+This is an example of a `sizewatcher` Github PR comment with a failure (ignore the small numbers):
 
 ---
 
-📈 [Sizewatcher](https://github.com/adobe/sizewatcher) measured these changes:
+<details open><summary>❌ <a href="https://github.com/adobe/sizewatcher">Sizewatcher</a> detected a problematic size increase 📈:</summary>
+<p><blockquote>
 
-<details>
-<summary>✅ <code>git</code> <b>+0.2%</b> (246 kB => 247 kB)</summary>
-<br>
+<details><summary>❌ <code>git</code> <b>+97.9%</b> (186 kB => 368 kB)</summary><br>Largest files in new changes:<pre>ecaf42b1d55c  4.5KiB lib/report.js<br>9c1a82fa7efb  2.8KiB lib/render.js<br>710a7c687b06  2.8KiB lib/render.js<br>e7a5a58b23a6  2.7KiB test/config.test.js<br>0a8f1a2ddb4f  2.4KiB test/config.test.js<br>6846cf298cd4  2.3KiB test/config.test.js<br>461b7663fd23  1.6KiB lib/config.js<br>a643d322cc26  1.5KiB lib/config.js<br>6db7d5c27a66     69B .sizewatcher.yml</pre></details>
 
-Largest files in new changes:
-```
-360cccafa87c    974B .npmignore
-```
-</details>
+<details><summary>✅ <code>node_modules</code> <b>-6.1%</b> (42.5 MB => 39.9 MB)</summary><br>Largest node modules:<pre>┌───────────────┬─────────────┬────────┐<br>│ name          │ children    │ size   │<br>├───────────────┼─────────────┼────────┤<br>│ @octokit/rest │ 33          │ 11.25M │<br>├───────────────┼─────────────┼────────┤<br>│ js-yaml       │ 3           │ 0.72M  │<br>├───────────────┼─────────────┼────────┤<br>│ simple-git    │ 2           │ 0.24M  │<br>├───────────────┼─────────────┼────────┤<br>│ tmp           │ 13          │ 0.22M  │<br>├───────────────┼─────────────┼────────┤<br>│ debug         │ 1           │ 0.08M  │<br>├───────────────┼─────────────┼────────┤<br>│ deepmerge     │ 0           │ 0.03M  │<br>├───────────────┼─────────────┼────────┤<br>│ require-dir   │ 0           │ 0.02M  │<br>├───────────────┼─────────────┼────────┤<br>│ du            │ 1           │ 0.01M  │<br>├───────────────┼─────────────┼────────┤<br>│ pretty-bytes  │ 0           │ 0.01M  │<br>├───────────────┼─────────────┼────────┤<br>│ 9 modules     │ 34 children │ 4.57M  │<br>└───────────────┴─────────────┴────────┘</pre></details>
 
-<details>
-<summary>✅ <code>node_modules</code> has no changes (46.8 MB)</summary>
-<br>
+<details><summary>Notes</summary><br>
 
-Largest node modules:
-```
-┌───────────────┬─────────────┬────────┐
-│ name          │ children    │ size   │
-├───────────────┼─────────────┼────────┤
-│ @octokit/rest │ 33          │ 11.25M │
-├───────────────┼─────────────┼────────┤
-│ js-yaml       │ 3           │ 0.72M  │
-├───────────────┼─────────────┼────────┤
-│ simple-git    │ 2           │ 0.24M  │
-├───────────────┼─────────────┼────────┤
-│ tmp           │ 13          │ 0.22M  │
-├───────────────┼─────────────┼────────┤
-│ debug         │ 1           │ 0.08M  │
-├───────────────┼─────────────┼────────┤
-│ deepmerge     │ 0           │ 0.03M  │
-├───────────────┼─────────────┼────────┤
-│ require-dir   │ 0           │ 0.02M  │
-├───────────────┼─────────────┼────────┤
-│ du            │ 1           │ 0.01M  │
-├───────────────┼─────────────┼────────┤
-│ pretty-bytes  │ 0           │ 0.01M  │
-├───────────────┼─────────────┼────────┤
-│ 9 modules     │ 34 children │ 4.57M  │
-└───────────────┴─────────────┴────────┘
-```
-</details>
-
-<details>
-<summary>Notes</summary>
-<br>
-
-- PR branch: `docs` @ 15626a050330492da8b745dadb4f5d304b670e83
+- PR branch: `testconfig` @ 21b66dfe6c3f6d09d4929ea2dec1e62cd1a7e7f2
 - Base branch: `main`
 - Sizewatcher v1.0.0
-- Configuration
-<pre>
+- Effective Configuration:
+
+```yaml
 limits:
-  fail: 50%
-  warn: 10%
+  fail: 100%
+  warn: 30%
+  ok: '-10%'
+report:
+  githubComment: true
+  githubStatus: false
+comparators:
+  git:
+    limits:
+      fail: 50%
+  custom: null
+```
+</details>
+
+</blockquote></p>
+</details>
+
+---
+
+And here if everything looks good:
+
+---
+
+<details ><summary>✅ <a href="https://github.com/adobe/sizewatcher">Sizewatcher</a> found no problematic size increases.</summary>
+<p><blockquote>
+
+<details><summary>✅ <code>git</code> <b>+97.9%</b> (186 kB => 368 kB)</summary><br>Largest files in new changes:<pre>ecaf42b1d55c  4.5KiB lib/report.js<br>9c1a82fa7efb  2.8KiB lib/render.js<br>710a7c687b06  2.8KiB lib/render.js<br>e7a5a58b23a6  2.7KiB test/config.test.js<br>0a8f1a2ddb4f  2.4KiB test/config.test.js<br>6846cf298cd4  2.3KiB test/config.test.js<br>461b7663fd23  1.6KiB lib/config.js<br>a643d322cc26  1.5KiB lib/config.js<br>6db7d5c27a66     69B .sizewatcher.yml</pre></details>
+
+<details><summary>✅ <code>node_modules</code> <b>-6.1%</b> (42.5 MB => 39.9 MB)</summary><br>Largest node modules:<pre>┌───────────────┬─────────────┬────────┐<br>│ name          │ children    │ size   │<br>├───────────────┼─────────────┼────────┤<br>│ @octokit/rest │ 33          │ 11.25M │<br>├───────────────┼─────────────┼────────┤<br>│ js-yaml       │ 3           │ 0.72M  │<br>├───────────────┼─────────────┼────────┤<br>│ simple-git    │ 2           │ 0.24M  │<br>├───────────────┼─────────────┼────────┤<br>│ tmp           │ 13          │ 0.22M  │<br>├───────────────┼─────────────┼────────┤<br>│ debug         │ 1           │ 0.08M  │<br>├───────────────┼─────────────┼────────┤<br>│ deepmerge     │ 0           │ 0.03M  │<br>├───────────────┼─────────────┼────────┤<br>│ require-dir   │ 0           │ 0.02M  │<br>├───────────────┼─────────────┼────────┤<br>│ du            │ 1           │ 0.01M  │<br>├───────────────┼─────────────┼────────┤<br>│ pretty-bytes  │ 0           │ 0.01M  │<br>├───────────────┼─────────────┼────────┤<br>│ 9 modules     │ 34 children │ 4.57M  │<br>└───────────────┴─────────────┴────────┘</pre></details>
+
+<details><summary>Notes</summary><br>
+
+- PR branch: `testconfig` @ 21b66dfe6c3f6d09d4929ea2dec1e62cd1a7e7f2
+- Base branch: `main`
+- Sizewatcher v1.0.0
+- Effective Configuration:
+
+```yaml
+limits:
+  fail: 100%
+  warn: 200%
   ok: '-10%'
 report:
   githubComment: true
   githubStatus: false
 comparators: {}
-</pre></details>
+```
+</details>
+
+</blockquote></p>
+</details>
 
 ---
 
-## Standard behavior
+## How it works
 
 By default `sizewatcher` will
 - checkout the before and after branch versions in temporary directories
 - go through all [comparators](#comparators-reference) that apply
 - measure the sizes, compare and report
-  - fail ❌ at a 50%+ increase
-  - warn ⚠️ at a 10%+ increase
-  - report ok ✅ if the size does not change by +/-10%
+  - fail ❌ at a 100%+ increase
+  - warn ⚠️ at a 30%+ increase
+  - report ok ✅ if the size change is between -10 and +30%
   - cheer 🎉 if there is a 10% decrease
 - print result in cli output
 - report result as PR comment
@@ -121,6 +127,8 @@ By default `sizewatcher` will
 
 - [Nodejs](https://nodejs.org) version 10+
   - recommended to use latest stable version "LTS"
+- Github or Github Enterprise
+  - if you want to run it on pull requests
 - CI system running on Github pull requests
   - [Github Actions](https://github.com/features/actions) (simplest setup)
   - [Travis CI](https://travis-ci.org)
@@ -147,7 +155,7 @@ sizewatcher -h
 
 Help output:
 ```
-Usage: /usr/local/bin/sizewatcher [<options>] [<before> [<after>]]
+Usage: sizewatcher [<options>] [<before> [<after>]]
 
 Arguments:
   <before>   Before branch/commit for comparison. Defaults to default branch or main/master.
@@ -203,18 +211,31 @@ sizewatcher before after
 
 ## CI Setup
 
+- [CI Overview](#ci-overview)
 - [Github Actions](#github-actions)
 - [Travis CI](#travis-ci)
 - [CircleCI](#circleci)
 - [Other CIs](#other-cis)
 
-To run `sizewatcher` in your CI, which is where it should run, it is best run using [npx](https://nodejs.dev/learn/the-npx-nodejs-package-runner), which comes pre-installed with nodejs and will automatically download and run the latest version in one go:
+### CI Overview
+
+#### Run using npx
+
+To run `sizewatcher` in your CI, which is where it needs to run automatically for checking pull requests, it is best run using [npx](https://nodejs.dev/learn/the-npx-nodejs-package-runner), which comes pre-installed with nodejs and will automatically download and run the latest version in one go:
 
 ```
 npx @adobe/sizewatcher
 ```
 
-Depending on the CI, branches of the pull request are automatically detected. Last but not least, to be able to automatically comment on the PR or report a commit status, a **github token** must be set as environment variable:
+This command will always use the latest published version. In some cases it might be (temporarily) desireable to stick to a certain version, which can be achieved using:
+
+```
+npx @adobe/sizewatcher@1.0.0
+```
+
+#### GITHUB_TOKEN
+
+To be able to automatically comment on the PR or report a commit status, a **github token** must be set as environment variable:
 
 ```
 GITHUB_TOKEN=....
@@ -222,6 +243,19 @@ GITHUB_TOKEN=....
 
 This token should be a service/bot user that has read/pull permission on the repository (allowing to comment). Note that the comments will be shown under that user's name. For example, you might want to create a user named `sizewatcher-bot` or the like. With Github Actions this is not required, it has a built-in `github-actions` bot user.
 
+#### GITHUB_API_URL
+
+If you use Github Enterprise, set the custom [Github API URL](https://docs.github.com/en/enterprise-server@2.21/rest/reference/enterprise-admin) in the `GITHUB_API_URL` environment variable:
+
+```
+GITHUB_API_URL=https://mygithub.company.com/api/v3/
+```
+
+This is not required for public github.com.
+
+#### Order of steps
+
+You can run `sizewatcher` before, after or in parallel to your main build step. It does not rely on output of a build, since it will check out the code (before and after PR versions) separately and needs to run any build steps itself, such as using `script` in the [custom comparator](#custom).
 
 See below for CI specific setup.
 
@@ -245,8 +279,6 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '14'
-    # run your build/test first in case you want to measure build results
-    - run: npm install && npm test
     # ---------- this runs sizewatcher ------------
     - run: npx @adobe/sizewatcher
       env:
@@ -258,7 +290,7 @@ jobs:
 For [Travis CI](https://travis-ci.org) you need to
 - use `language: node_js`
   - if you already use a different language, find a way to ensure Nodejs 10+ is installed
-- under `script` run `npx @adobe/sizewatcher`, typically after your main build or test
+- under `script` run `npx @adobe/sizewatcher`
 - set a secret environment variable `GITHUB_TOKEN` in the [Travis repository settings](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with a github token with permission to comment on PRs and reporting commit statuses for the repository
 
 Example `.travis.yml`:
@@ -270,8 +302,6 @@ install:
   - npm install
 
 script:
-  # run your build/test first in case you want to measure build results
-  - npm test
   # ---------- this runs sizewatcher ------------
   - npx @adobe/sizewatcher
 ```
@@ -281,7 +311,7 @@ script:
 For [CircleCI](https://circleci.com) you need to
 - use a docker image with Nodejs 10+ installed
   - alternatively install [using nvm](https://www.google.com/search?q=circleci+use+nvm)
-- run `npx @adobe/sizewatcher`, typically after your main build or test
+- run `npx @adobe/sizewatcher`
 - set a secret environment variable `GITHUB_TOKEN` in the [CircleCI project settings](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-project) (or in a [Context](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-context)) with a github token with permission to comment on PRs and reporting commit statuses for the repository
 
 Example `.circleci/config.yml`:
@@ -295,10 +325,6 @@ jobs:
       - image: circleci/node:14
     steps:
       - checkout
-
-      # run your build/test first in case you want to measure build results
-      - run: npm install
-      - run: npm test
 
       # ---------- this runs sizewatcher ------------
       - run: npx @adobe/sizewatcher
@@ -316,7 +342,7 @@ Set these environment variables in the CI job:
 - `GITHUB_HEAD_REF` name of the branch of the pull request
 - `GITHUB_TOKEN` a github token with permission to comment on PRs and reporting commit statuses for the repository. This is a credential so use the proper CI credential management and never check this into the git repository!
 
-After your build or in parallel, run
+Then simply run
 
 ```
 npx @adobe/sizewatcher
@@ -345,10 +371,10 @@ report:
 #   see https://www.npmjs.com/package/xbytes
 # - absolute limit, as byte number: 1000000
 limits:
-  # when to fail - default: 50%
+  # when to fail - default: 100%
   fail: 50%
-  # when to warn - default: 10%
-  warn: 30%
+  # when to warn - default: 30%
+  warn: 10%
   # below the ok limit you will get a cheers for making it notably smaller
   # default: -10%
   ok: -5%
@@ -369,6 +395,15 @@ comparators:
       warn: 9 MB
       ok: 1 MB
 
+  npm_package:
+    # `dir` is supported for all comparators that support it and
+    # specifies the relative directory inside the project inside which to run the comparator
+    dir: "sub/folder"
+    # can also be an array with multiple directories to check
+    dir:
+      - "sub/folder1"
+      - "folder2"
+
   # custom comparator (only active if configured)
   custom:
     - name: my artifact
@@ -379,7 +414,10 @@ comparators:
 
     # there can be multiple custom comparators
     # name defaults to the path
-    - path: some_directory/
+    # path can include glob patterns
+    - path: "artifact-*.tgz"
+      # run some custom build command before measuring
+      script: npm install
       # limits can be configured as well
       limits:
         fail: 10 MB
@@ -389,6 +427,7 @@ comparators:
 
 - [git](#git)
 - [node_modules](#node_modules)
+- [npm_package](#npm_package)
 - [custom](#custom)
 
 ### git
@@ -451,6 +490,52 @@ Largest node modules:
 └───────────────┴─────────────┴────────┘
 ```
 
+Configuration: supports `dir`
+
+---
+
+### npm_package
+
+Compares the size of an npm package tarball by running `npm publish --dry-run`.
+
+Name: `npm_package`
+
+Trigger: Runs if a `package.json` is found.
+
+Details: Prints the package contents and metadata using the output of `npm publish --dry-run`.
+
+---
+Package contents:
+
+```
+📦  @adobe/sizewatcher@1.0.0
+=== Tarball Contents ===
+11.3kB LICENSE
+4.8kB  lib/checkout.js
+5.2kB  lib/compare.js
+1.7kB  lib/config.js
+3.9kB  lib/comparators/custom.js
+2.3kB  lib/comparators/git.js
+2.6kB  lib/github.js
+2.1kB  index.js
+2.2kB  lib/comparators/node_modules.js
+3.9kB  lib/render.js
+4.6kB  lib/report.js
+1.1kB  package.json
+695B   CHANGELOG.md
+23.9kB README.md
+=== Tarball Details ===
+name:          @adobe/sizewatcher
+version:       1.0.0
+package size:  18.6 kB
+unpacked size: 70.3 kB
+shasum:        80846caccca2194f3dd1122e8113206e20c202dc
+integrity:     sha512-c3VjMQQvqcqN8[...]ybMS6kg2chjpA==
+total files:   14
+```
+
+Configuration: supports `dir`
+
 ---
 
 ### custom
@@ -479,7 +564,16 @@ This comparator requires configuration in the `.sizewatcher.yml`:
 ```yaml
 comparators:
   custom:
-    path: build/artifact
+    path: src/somefile
+```
+
+If a build step is required first, use `script`:
+
+```yaml
+comparators:
+  custom:
+    path: "build/artifact-*.tgz"
+    script: npm run build
 ```
 
 To have multiple paths, with custom names:
@@ -488,14 +582,15 @@ To have multiple paths, with custom names:
 comparators:
   custom:
     - name: my artifact 1
-      path: build/artifact
+      path: "build/artifact"
     - name: my artifact 2
-      path: build/artifact2
+      path: "build/artifact2"
 ```
 
 Options:
-- `path` (required) relative path to file or folder to measure
+- `path` (required) relative path to file or folder to measure; supports [glob patterns](https://www.npmjs.com/package/glob). make sure to use quotes in the yaml if you use glob patterns
 - `name` (optional) custom label
+- `script` (optional) shell command to run before measuring `path`
 - `limits` can be set as usual
 
 ## Contribute

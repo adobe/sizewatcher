@@ -21,6 +21,3 @@ install:
 script:
   - npm test
   - npm run sizewatcher
-
-after_success:
-  - npm run report-coverage

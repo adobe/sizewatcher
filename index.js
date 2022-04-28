@@ -14,50 +14,5 @@
 
 'use strict';
 
-// index.js - main cli entry point
-
-const gitCheckoutBeforeAndAfter = require("./lib/checkout");
-const compare = require("./lib/compare");
-const report = require("./lib/report");
-
-function printUsage() {
-    console.log(`Usage: ${process.argv[1]} [<options>] [<before> [<after>]]`);
-    console.log();
-    console.log("Arguments:");
-    console.log("  <before>   Before branch/commit for comparison. Defaults to default branch or main/master.");
-    console.log("  <after>    After branch/commit for comparison. Defaults to current branch.");
-    console.log();
-    console.log("Options:");
-    console.log("  -h     Show help");
-}
-
-async function main(argv) {
-    try {
-        // yes, this should probably use a framework like oclif or yargs.
-        // but cli arguments are very limited now and so manual handling is enough
-        if (argv[0] === "-h") {
-            printUsage();
-            process.exit(1);
-        }
-
-        // TODO: detect main = main case
-
-        console.log(`Cloning git repository...`);
-        const { before, after } = await gitCheckoutBeforeAndAfter(process.cwd(), argv[0], argv[1]);
-
-        console.log(`Comparing changes from '${before.branch}' to '${after.branch}'\n`);
-
-        const deltas = await compare(before, after);
-
-        await report(deltas);
-
-    } catch (e) {
-        console.error(e);
-        process.exit(1);
-    } finally {
-        console.log("Done. Cleaning up...");
-    }
-}
-
-
-main(process.argv.slice(2));
+const sizewatcher = require("./lib/sizewatcher");
+sizewatcher(process.argv.slice(2));
