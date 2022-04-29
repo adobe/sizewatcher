@@ -12,7 +12,7 @@
 
 'use strict';
 
-const { stdout, stderr } = require("stdout-stderr");
+const captureLogs = require("./capture-stdout-stderr");
 const { spawn } = require("child_process");
 const supportsColor = require("supports-color");
 
@@ -38,8 +38,7 @@ function captureAfterEach() {
     if (isCaptureConsole(this)) {
         if (!process.env.TEST_PRINT_LOGS && this.currentTest.state !== 'passed') {
             printLine();
-            console.log(stdout.output);
-            console.error(stderr.output);
+            captureLogs.replay();
             printLine();
         }
     }
@@ -52,31 +51,28 @@ function wrapTestFn(testFn) {
             return;
         }
 
-        this.stdout = stdout;
-        this.stderr = stderr;
+        this.output = captureLogs.output;
+        this.stdout = captureLogs.stdout;
+        this.stderr = captureLogs.stderr;
+
         try {
-            // TODO: write own module that keeps order between stdout and stderr
-            stdout.start();
-            stderr.start();
+            captureLogs.start();
+
 
             if (process.env.TEST_PRINT_LOGS) {
-                stdout.print = true;
-                stderr.print = true;
+                captureLogs.print = true;
             }
 
             await testFn.apply(this);
 
-            stdout.stop();
-            stderr.stop();
+            captureLogs.stop();
 
         } catch (e) {
-            stdout.stop();
-            stderr.stop();
+            captureLogs.stop();
 
             throw e;
         } finally {
-            stdout.print = false;
-            stderr.print = false;
+            captureLogs.print = false;
         }
     };
 }
@@ -147,9 +143,11 @@ module.exports = {
      * Assert on test log output:
      *
      *     it("my test", function() {
-     *         assert(this.stdout.output.includes("something in stdout"));
-     *         assert(this.stderr.output.includes("something in stderr"));
+     *         assert(this.output.stdout.includes("something in stdout"));
+     *         assert(this.output.stderr.includes("something in stderr"));
+     *         assert(this.output.any.includes("something in stdout or stderr"));
      *     }).captureConsole = true;
+     *
      * -------------------------------------------------
      *
      * Print all logs during test runs:
@@ -157,6 +155,14 @@ module.exports = {
      * Set environment variable TEST_PRINT_LOGS=1 (any value)
      *
      *     TEST_PRINT_LOGS=1 npm test
+     *
+     * -------------------------------------------------
+     *
+     * Disable color (for stderr)
+     *
+     * Set environment variable TEST_LOG_DISABLE_COLOR=1 (any value)
+     *
+     *     TEST_LOG_DISABLE_COLOR=1 npm test
      *
      **/
     enableMochaCaptureConsole,
