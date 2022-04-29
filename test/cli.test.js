@@ -49,7 +49,7 @@ describe("cli e2e", function() {
     it("help", async function() {
         await sizewatcher(["-h"]);
 
-        assert(this.stderr.output.includes("Usage: sizewatcher [<options>] [<before> [<after>]]"));
+        assert(this.output.stderr.includes("Usage: sizewatcher [<options>] [<before> [<after>]]"));
 
         assert.strictEqual(lastExitCode, 1);
     });
@@ -60,7 +60,7 @@ describe("cli e2e", function() {
         await sizewatcher();
 
         assert.strictEqual(lastExitCode, 1);
-        assert(this.stderr.output.includes("Error: Not inside a git checkout"));
+        assert(this.output.stderr.includes("Error: Not inside a git checkout"));
     });
 
     it("local branch", async function() {
@@ -74,7 +74,64 @@ describe("cli e2e", function() {
         await sizewatcher();
 
         assert.strictEqual(lastExitCode, undefined);
-        assert(this.stdout.output.includes("'main' => 'new'"));
-        assert(this.stdout.output.includes("+ ✅  git: -0.0%"));
+        assert(this.output.stdout.includes("'main' => 'new'"));
+        assert(this.output.stdout.includes("+ ✅  git: -0."));
+    });
+
+    it("fork PR (github actions)", async function() {
+        process.env.CI = "true";
+        process.env.GITHUB_ACTIONS = true;
+        process.env.GITHUB_BASE_REF = "main";
+        // this branch name isn't actually set in the checkout steps in the script
+        process.env.GITHUB_HEAD_REF = "branch";
+
+        await exec(path.join(PROJECT_DIR, "test/scripts/fork.sh"));
+        process.chdir("checkout");
+
+        await sizewatcher();
+
+        assert.strictEqual(lastExitCode, undefined);
+        assert(this.output.stdout.includes("'main' => 'branch'"));
+        assert(this.output.stdout.includes("git:"));
+    });
+
+    it("no package.json in before branch", async function() {
+        await exec(path.join(PROJECT_DIR, "test/scripts/no-package-json-before.sh"));
+
+        await sizewatcher();
+
+        assert.strictEqual(lastExitCode, undefined);
+        assert(!this.output.any.includes("node_modules: measurement error"));
+        assert(this.output.stdout.includes("+ ✅  node_modules:"));
+    });
+
+    it("no package.json in after branch", async function() {
+        await exec(path.join(PROJECT_DIR, "test/scripts/no-package-json-after.sh"));
+
+        await sizewatcher();
+
+        assert.strictEqual(lastExitCode, undefined);
+        assert(!this.output.any.includes("node_modules: measurement error"));
+        assert(this.output.stdout.includes("+ ✅  node_modules:"));
+    });
+
+    it("package.json with dependencies removed", async function() {
+        await exec(path.join(PROJECT_DIR, "test/scripts/package-json-removed.sh"));
+
+        await sizewatcher();
+
+        assert.strictEqual(lastExitCode, undefined);
+        assert(!this.output.any.includes("node_modules: measurement error"));
+        assert(this.output.stdout.includes("+ 🎉  node_modules: -100.0%"));
+    });
+
+    it("package.json with dependencies added", async function() {
+        await exec(path.join(PROJECT_DIR, "test/scripts/package-json-added.sh"));
+
+        await sizewatcher();
+
+        assert.strictEqual(lastExitCode, undefined);
+        assert(!this.output.any.includes("node_modules: measurement error"));
+        assert(this.output.stdout.includes("+ ❌  node_modules: 100.0%"));
     });
 });
