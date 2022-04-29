@@ -78,18 +78,20 @@ describe("cli e2e", function() {
         assert(this.output.stdout.includes("+ ✅  git: -0."));
     });
 
-    it("fork PR (github actions", async function() {
-        // await exec(path.join(PROJECT_DIR, "test/checkout/githubactions-fork"));
+    it("fork PR (github actions)", async function() {
+        process.env.CI = "true";
+        process.env.GITHUB_ACTIONS = true;
+        process.env.GITHUB_BASE_REF = "main";
+        // this branch name isn't actually set in the checkout steps in the script
+        process.env.GITHUB_HEAD_REF = "branch";
 
-        // // we simulate a local repo and run, ensure these vars from CIs are not set
-        // delete process.env.GITHUB_BASE_REF;
-        // delete process.env.TRAVIS_PULL_REQUEST;
-        // delete process.env.TRAVIS_BRANCH;
+        await exec(path.join(PROJECT_DIR, "test/scripts/fork.sh"));
+        process.chdir("checkout");
 
-        // await sizewatcher();
+        await sizewatcher();
 
-        // assert.strictEqual(lastExitCode, undefined);
-        // assert(this.output.stdout.includes("'main' => 'new'"));
-        // assert(this.output.stdout.includes("+ ✅  git: -0."));
+        assert.strictEqual(lastExitCode, undefined);
+        assert(this.output.stdout.includes("'main' => 'branch'"));
+        assert(this.output.stdout.includes("git:"));
     });
 });
