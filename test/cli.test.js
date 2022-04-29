@@ -75,6 +75,21 @@ describe("cli e2e", function() {
 
         assert.strictEqual(lastExitCode, undefined);
         assert(this.stdout.output.includes("'main' => 'new'"));
-        assert(this.stdout.output.includes("+ ✅  git: -0.0%"));
+        assert(this.stdout.output.includes("+ ✅  git: -0."));
+    });
+
+    it("fork PR (github actions", async function() {
+        // await exec(path.join(PROJECT_DIR, "test/checkout/githubactions-fork"));
+
+        // // we simulate a local repo and run, ensure these vars from CIs are not set
+        // delete process.env.GITHUB_BASE_REF;
+        // delete process.env.TRAVIS_PULL_REQUEST;
+        // delete process.env.TRAVIS_BRANCH;
+
+        // await sizewatcher();
+
+        // assert.strictEqual(lastExitCode, undefined);
+        // assert(this.stdout.output.includes("'main' => 'new'"));
+        // assert(this.stdout.output.includes("+ ✅  git: -0."));
     });
 });
