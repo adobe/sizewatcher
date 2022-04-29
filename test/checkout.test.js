@@ -38,19 +38,28 @@ async function run(dir) {
     assert.equal(await Git(after.dir).revparse(["HEAD"]), commitSha);
 }
 
+function cleanEnvVars() {
+    delete process.env.CI;
+    delete process.env.GITHUB_ACTIONS;
+    delete process.env.GITHUB_BASE_REF;
+    delete process.env.GITHUB_HEAD_REF;
+    delete process.env.TRAVIS;
+    delete process.env.TRAVIS_PULL_REQUEST_BRANCH;
+    delete process.env.TRAVIS_BRANCH;
+    delete process.env.CIRCLECI;
+    delete process.env.CIRCLE_BRANCH;
+}
+
 describe("checkout", function() {
 
     this.captureConsole = true;
 
     beforeEach(function() {
-        delete process.env.CI;
-        delete process.env.GITHUB_ACTIONS;
-        delete process.env.GITHUB_HEAD_REF;
-        delete process.env.TRAVIS;
-        delete process.env.TRAVIS_PULL_REQUEST_BRANCH;
-        delete process.env.TRAVIS_BRANCH;
-        delete process.env.CIRCLECI;
-        delete process.env.CIRCLE_BRANCH;
+        cleanEnvVars();
+    });
+
+    afterEach(function() {
+        cleanEnvVars();
     });
 
     it("handles normal checkouts", async function() {
@@ -72,6 +81,15 @@ describe("checkout", function() {
     it("handles github action checkouts", async function() {
         process.env.CI = "true";
         process.env.GITHUB_ACTIONS = true;
+        await run("test/checkout/githubactions");
+    });
+
+    it("handles github action fork PR checkouts", async function() {
+        process.env.CI = "true";
+        process.env.GITHUB_ACTIONS = true;
+        process.env.GITHUB_BASE_REF = "main";
+        // this branch name isn't actually set in test/checkout/githubactions/checkout.sh
+        process.env.GITHUB_HEAD_REF = "some-branch";
         await run("test/checkout/githubactions");
     });
 });

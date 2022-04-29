@@ -75,7 +75,24 @@ describe("cli e2e", function() {
 
         assert.strictEqual(lastExitCode, undefined);
         assert(this.output.stdout.includes("'main' => 'new'"));
-        assert(this.output.stdout.includes("+ ✅  git: -0.0%"));
+        assert(this.output.stdout.includes("+ ✅  git: -0."));
+    });
+
+    it("fork PR (github actions)", async function() {
+        process.env.CI = "true";
+        process.env.GITHUB_ACTIONS = true;
+        process.env.GITHUB_BASE_REF = "main";
+        // this branch name isn't actually set in the checkout steps in the script
+        process.env.GITHUB_HEAD_REF = "branch";
+
+        await exec(path.join(PROJECT_DIR, "test/scripts/fork.sh"));
+        process.chdir("checkout");
+
+        await sizewatcher();
+
+        assert.strictEqual(lastExitCode, undefined);
+        assert(this.output.stdout.includes("'main' => 'branch'"));
+        assert(this.output.stdout.includes("git:"));
     });
 
 });
