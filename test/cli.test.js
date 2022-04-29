@@ -49,7 +49,7 @@ describe("cli e2e", function() {
     it("help", async function() {
         await sizewatcher(["-h"]);
 
-        assert(this.stderr.output.includes("Usage: sizewatcher [<options>] [<before> [<after>]]"));
+        assert(this.output.stderr.includes("Usage: sizewatcher [<options>] [<before> [<after>]]"));
 
         assert.strictEqual(lastExitCode, 1);
     });
@@ -60,7 +60,7 @@ describe("cli e2e", function() {
         await sizewatcher();
 
         assert.strictEqual(lastExitCode, 1);
-        assert(this.stderr.output.includes("Error: Not inside a git checkout"));
+        assert(this.output.stderr.includes("Error: Not inside a git checkout"));
     });
 
     it("local branch", async function() {
@@ -74,7 +74,8 @@ describe("cli e2e", function() {
         await sizewatcher();
 
         assert.strictEqual(lastExitCode, undefined);
-        assert(this.stdout.output.includes("'main' => 'new'"));
-        assert(this.stdout.output.includes("+ ✅  git: -0.0%"));
+        assert(this.output.stdout.includes("'main' => 'new'"));
+        assert(this.output.stdout.includes("+ ✅  git: -0.0%"));
     });
+
 });
