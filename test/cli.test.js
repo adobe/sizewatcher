@@ -95,4 +95,43 @@ describe("cli e2e", function() {
         assert(this.output.stdout.includes("git:"));
     });
 
+    it("no package.json in before branch", async function() {
+        await exec(path.join(PROJECT_DIR, "test/scripts/no-package-json-before.sh"));
+
+        await sizewatcher();
+
+        assert.strictEqual(lastExitCode, undefined);
+        assert(!this.output.any.includes("node_modules: measurement error"));
+        assert(this.output.stdout.includes("+ ✅  node_modules:"));
+    });
+
+    it("no package.json in after branch", async function() {
+        await exec(path.join(PROJECT_DIR, "test/scripts/no-package-json-after.sh"));
+
+        await sizewatcher();
+
+        assert.strictEqual(lastExitCode, undefined);
+        assert(!this.output.any.includes("node_modules: measurement error"));
+        assert(this.output.stdout.includes("+ ✅  node_modules:"));
+    });
+
+    it("package.json with dependencies removed", async function() {
+        await exec(path.join(PROJECT_DIR, "test/scripts/package-json-removed.sh"));
+
+        await sizewatcher();
+
+        assert.strictEqual(lastExitCode, undefined);
+        assert(!this.output.any.includes("node_modules: measurement error"));
+        assert(this.output.stdout.includes("+ 🎉  node_modules: -100.0%"));
+    });
+
+    it("package.json with dependencies added", async function() {
+        await exec(path.join(PROJECT_DIR, "test/scripts/package-json-added.sh"));
+
+        await sizewatcher();
+
+        assert.strictEqual(lastExitCode, undefined);
+        assert(!this.output.any.includes("node_modules: measurement error"));
+        assert(this.output.stdout.includes("+ ❌  node_modules: 100.0%"));
+    });
 });
