@@ -1,6 +1,6 @@
 {
   "name": "@adobe/sizewatcher",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Warns if your pull requests introduce large size increases.",
   "main": "index.js",
   "bin": {
