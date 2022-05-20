@@ -14,7 +14,7 @@
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
-- [CI Setup](#ci-setup)
+- [**CI Setup**](#ci-setup)
 - [Configuration](#configuration)
 - [Comparators reference](#comparators-reference)
 - [Contribute](#contribute)
@@ -137,11 +137,13 @@ By default `sizewatcher` will
 
 ## Installation
 
-You can install the `sizewatcher` tool locally for testing or checking your changes before committing:
+Local: You can install the `sizewatcher` tool locally for testing or checking your changes before committing:
 
 ```
 npm install -g @adobe/sizewatcher
 ```
+
+For setup in Continuous Integration: see [CI Setup](#ci-setup) section.
 
 ## Usage
 
@@ -230,7 +232,7 @@ npx @adobe/sizewatcher
 This command will always use the latest published version. In some cases it might be (temporarily) desireable to stick to a certain version, which can be achieved using:
 
 ```
-npx @adobe/sizewatcher@1.0.0
+npx @adobe/sizewatcher@1.2.1
 ```
 
 #### GITHUB_TOKEN
