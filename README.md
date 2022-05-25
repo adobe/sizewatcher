@@ -271,6 +271,18 @@ For [Github Actions](https://github.com/features/actions) you need to
 Example [workflow yaml](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions) snippet (`.github/workflows/*.yml`):
 
 ```yaml
+name: gradio-sizewatcher
+
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "**"
+  pull_request:
+    paths:
+      - "**"
+
 jobs:
   build:
     runs-on: ubuntu-latest
