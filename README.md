@@ -33,6 +33,8 @@ While any custom file or folder path can be measured via configuration, various 
 
 `sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded.
 
+:warning: **The git size comparison feature (the `git` comparator) is currently not calculating correct values (as of 1.2.1). See [issue #52](https://github.com/adobe/sizewatcher/issues/52) for more details.**
+
 This is an example of a `sizewatcher` Github PR comment with a failure (ignore the small numbers):
 
 ---
