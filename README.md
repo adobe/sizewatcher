@@ -127,7 +127,7 @@ By default `sizewatcher` will
 
 ## Requirements
 
-- [Nodejs](https://nodejs.org) version 10+
+- [Nodejs](https://nodejs.org) version 12+ (since 1.3.0)
   - recommended to use latest stable version "LTS"
 - Github or Github Enterprise
   - if you want to run it on pull requests
@@ -293,7 +293,7 @@ jobs:
 
 For [Travis CI](https://travis-ci.org) you need to
 - use `language: node_js`
-  - if you already use a different language, find a way to ensure Nodejs 10+ is installed
+  - if you already use a different language, find a way to ensure Nodejs 12+ is installed
 - under `script` run `npx @adobe/sizewatcher`
 - set a secret environment variable `GITHUB_TOKEN` in the [Travis repository settings](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with a github token with permission to comment on PRs and reporting commit statuses for the repository
 
@@ -313,7 +313,7 @@ script:
 ### CircleCI
 
 For [CircleCI](https://circleci.com) you need to
-- use a docker image with Nodejs 10+ installed
+- use a docker image with Nodejs 12+ installed
   - alternatively install [using nvm](https://www.google.com/search?q=circleci+use+nvm)
 - run `npx @adobe/sizewatcher`
 - set a secret environment variable `GITHUB_TOKEN` in the [CircleCI project settings](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-project) (or in a [Context](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-context)) with a github token with permission to comment on PRs and reporting commit statuses for the repository
@@ -338,7 +338,7 @@ jobs:
 
 This is not tested well but might work.
 
-Ensure Nodejs 10+ is installed.
+Ensure Nodejs 12+ is installed.
 
 Set these environment variables in the CI job:
 

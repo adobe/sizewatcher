@@ -10,13 +10,13 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    
+
     permissions:
       pull-requests: write
 
     strategy:
       matrix:
-        node-version: [10, 12, 14, 16, "lts/*"]
+        node-version: [12, 14, 16, "lts/*"]
 
     steps:
     - uses: actions/checkout@v2
