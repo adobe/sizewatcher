@@ -1,0 +1,53 @@
+{
+    "extends": [
+      "config:recommended",
+      ":semanticCommits",
+      ":pinDependencies"
+    ],
+    "baseBranches": [
+      "main"
+    ],
+    "timezone": "America/Los_Angeles",
+    "branchPrefix": "renovate-",
+    "packageRules": [
+      {
+        "groupName": "external fixes",
+        "matchUpdateTypes": [
+          "patch",
+          "pin",
+          "digest",
+          "minor"
+        ],
+        "automerge": true,
+        "schedule": [
+          "after 2pm on Saturday"
+        ],
+        "matchPackageNames": [
+          "/^.+/"
+        ]
+      },
+      {
+        "groupName": "external major",
+        "matchUpdateTypes": [
+          "major"
+        ],
+        "automerge": false,
+        "schedule": [
+          "after 2pm on Monday"
+        ],
+        "matchPackageNames": [
+          "/^.+/"
+        ]
+      },
+      {
+        "matchDatasources": [
+          "orb"
+        ],
+        "matchUpdateTypes": [
+          "patch",
+          "minor"
+        ],
+        "automerge": true
+      }
+    ]
+  }
