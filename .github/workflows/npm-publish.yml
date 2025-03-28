@@ -13,7 +13,7 @@ jobs:
       # See https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
       - uses: actions/setup-node@v2
         with:
-          node-version: "16"
+          node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
       - run: npm ci
       - run: npm test
