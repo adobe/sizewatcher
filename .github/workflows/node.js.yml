@@ -24,7 +24,6 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-        check-latest: true
     - run: npm install
     - run: npm test
     - run: npm run sizewatcher
