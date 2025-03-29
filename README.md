@@ -14,7 +14,7 @@
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
-- [**CI Setup**](#ci-setup)
+- [CI Setup](#ci-setup)
 - [Configuration](#configuration)
 - [Comparators reference](#comparators-reference)
 - [Contribute](#contribute)
@@ -643,6 +643,21 @@ If you want to add a new automatic comparator for language X or dependency manag
    ```
 6. test and validate
 7. create PR
+
+### How to release
+
+How to create a new release of version `1.4` (as example):
+
+1. Ensure all changes are merged to `main`
+2. Bump version in `package.json` to `1.4` and commit like [here](https://github.com/adobe/sizewatcher/commit/4da848b6cc52a38f98203760f8f74e44a0ec77cd)
+3. Create a new draft [release in Github](https://github.com/adobe/sizewatcher/releases)
+   1. Nmae the release `1.4`
+   2. Add release notes with new features, improvements, fixes
+   3. Ensure github creates a tag `v1.4`
+4. Save draft and check
+5. Publish the release
+6. The [Publish Package to NPM](https://github.com/adobe/sizewatcher/actions/workflows/npm-publish.yml) Github action workflow should automatically release the new version to npmjs.com
+
 
 ## Licensing
 
