@@ -48,5 +48,8 @@
     "simple-git": "3.22.0",
     "tmp": "0.2.3",
     "xbytes": "1.9.1"
+  },
+  "overrides": {
+    "whatwg-url": "^14.0.0"
   }
 }
