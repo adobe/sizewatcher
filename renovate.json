@@ -11,7 +11,7 @@
     "branchPrefix": "renovate-",
     "packageRules": [
       {
-        "groupName": "external fixes",
+        "groupName": "minor and patch version changes",
         "matchUpdateTypes": [
           "patch",
           "pin",
@@ -27,7 +27,7 @@
         ]
       },
       {
-        "groupName": "external major",
+        "groupName": "major version changes",
         "matchUpdateTypes": [
           "major"
         ],
