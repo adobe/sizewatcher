@@ -4,11 +4,14 @@
   "description": "Warns if your pull requests introduce large size increases.",
   "main": "index.js",
   "bin": {
-    "sizewatcher": "./index.js"
+    "sizewatcher": "index.js"
   },
   "author": "Adobe",
   "license": "Apache-2.0",
-  "repository": "adobe/sizewatcher",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adobe/sizewatcher.git"
+  },
   "keywords": [
     "size",
     "check",
