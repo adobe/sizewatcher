@@ -9,6 +9,7 @@
     ],
     "timezone": "America/Los_Angeles",
     "branchPrefix": "renovate-",
+    "ignoreDeps": ["simple-git"],
     "packageRules": [
       {
         "groupName": "minor and patch version changes",
