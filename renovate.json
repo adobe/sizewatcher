@@ -9,7 +9,14 @@
     ],
     "timezone": "America/Los_Angeles",
     "branchPrefix": "renovate-",
-    "ignoreDeps": ["simple-git"],
+    "ignoreDeps": [
+      "simple-git",
+      "@octokit/rest",
+      "glob",
+      "pretty-bytes",
+      "eslint",
+      "supports-color"
+    ],
     "packageRules": [
       {
         "groupName": "minor and patch version changes",

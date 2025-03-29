@@ -10,7 +10,7 @@
 
 # custom docker image with newer git (> 2.18) required for github actions test
 
-FROM circleci/node:12
+FROM circleci/node:16
 
 WORKDIR /home/circleci
 
@@ -26,6 +26,6 @@ RUN cd git-2.25.0 && \
     sudo make prefix=/usr/local install
 
 ###################################################
-FROM circleci/node:12
+FROM circleci/node:16
 
 COPY --from=0 /usr/local/bin/git /usr/local/bin/git
