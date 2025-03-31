@@ -127,7 +127,7 @@ By default `sizewatcher` will
 
 ## Requirements
 
-- [Nodejs](https://nodejs.org) version 12+ (since 1.3.0)
+- [Nodejs](https://nodejs.org) version 18+ (since 1.4.0)
   - recommended to use latest stable version "LTS"
 - Github or Github Enterprise
   - if you want to run it on pull requests
@@ -278,11 +278,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Install Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
-        node-version: '14'
+        node-version: 'lts/*'
     # ---------- this runs sizewatcher ------------
     - run: npx @adobe/sizewatcher
       env:
