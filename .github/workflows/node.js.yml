@@ -26,8 +26,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
         check-latest: true
     - run: npm install
-    - run: npm test
     - run: npm run sizewatcher
+    - run: npm test
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Coveralls
