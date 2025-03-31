@@ -75,7 +75,7 @@ describe("cli e2e", function() {
 
         assert.strictEqual(lastExitCode, undefined);
         assert(this.output.stdout.includes("'main' => 'new'"));
-        assert(this.output.stdout.includes("+ ✅  git: -0."));
+        assert(this.output.stdout.includes("+ ✅  git: 0.0%"));
     });
 
     it("fork PR (github actions)", async function() {
