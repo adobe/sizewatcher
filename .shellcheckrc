@@ -1,0 +1,1 @@
+disable=SC2164 # cd is ok in our checkout.sh scripts

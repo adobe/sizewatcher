@@ -20,7 +20,7 @@ const Git = require("simple-git");
 const { enableMochaCaptureConsole, exec } = require("./mocha-capture-console");
 enableMochaCaptureConsole();
 
-async function run(dir) {
+async function run(dir, beforeBranch='main', afterBranch) {
     // prepare
     await exec("../setup.sh", dir);
     const commitSha = fs.readFileSync(path.join(dir, "build", "commit.hash")).toString().trim();
@@ -28,7 +28,7 @@ async function run(dir) {
     const checkoutDir = path.join(dir, path.normalize("build/checkout"));
 
     // test checkout logic
-    const { before, after } = await gitCheckoutBeforeAndAfter(checkoutDir, "main");
+    const { before, after } = await gitCheckoutBeforeAndAfter(checkoutDir, beforeBranch, afterBranch);
 
     // assert
     assert.notEqual(before.dir, after.dir);
@@ -66,6 +66,11 @@ describe("checkout", function() {
         await run("test/checkout/normal");
     });
 
+    it("handles local cli invocation with before and after branch specified", async function() {
+        // local checkout will be on some commit that is NOT branch 'branch'
+        await run("test/checkout/local", "main", "branch");
+    });
+
     it("handles travis checkouts", async function() {
         process.env.CI = "true";
         process.env.TRAVIS = true;
@@ -88,8 +93,7 @@ describe("checkout", function() {
         process.env.CI = "true";
         process.env.GITHUB_ACTIONS = true;
         process.env.GITHUB_BASE_REF = "main";
-        // this branch name isn't actually set in test/checkout/githubactions/checkout.sh
-        process.env.GITHUB_HEAD_REF = "some-branch";
+        process.env.GITHUB_HEAD_REF = "branch";
         await run("test/checkout/githubactions");
     });
 });
