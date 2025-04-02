@@ -51,7 +51,7 @@ describe("cli e2e", function() {
 
         assert(this.output.stderr.includes("Usage: sizewatcher [<options>] [<before> [<after>]]"));
 
-        assert.strictEqual(lastExitCode, 1);
+        assert.strictEqual(lastExitCode, 1, `exit code should be 1 but was ${lastExitCode}`);
     });
 
     it("no git repo", async function() {
@@ -59,7 +59,7 @@ describe("cli e2e", function() {
 
         await sizewatcher();
 
-        assert.strictEqual(lastExitCode, 1);
+        assert.strictEqual(lastExitCode, 1, `exit code should be 1 but was ${lastExitCode}`);
         assert(this.output.stderr.includes("Error: Not inside a git checkout"));
     });
 
@@ -73,8 +73,8 @@ describe("cli e2e", function() {
 
         await sizewatcher();
 
-        assert.strictEqual(lastExitCode, undefined);
-        assert(this.output.stdout.includes("'main' => 'new'"));
+        assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
+        assert(this.output.stdout.match(/'main' \(sha \S+\) => 'new' \(sha \S+\)/));
         assert(this.output.stdout.includes("+ ✅  git: 0.0%"));
     });
 
@@ -82,7 +82,6 @@ describe("cli e2e", function() {
         process.env.CI = "true";
         process.env.GITHUB_ACTIONS = true;
         process.env.GITHUB_BASE_REF = "main";
-        // this branch name isn't actually set in the checkout steps in the script
         process.env.GITHUB_HEAD_REF = "branch";
 
         await exec(path.join(PROJECT_DIR, "test/scripts/fork.sh"));
@@ -90,8 +89,8 @@ describe("cli e2e", function() {
 
         await sizewatcher();
 
-        assert.strictEqual(lastExitCode, undefined);
-        assert(this.output.stdout.includes("'main' => 'branch'"));
+        assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
+        assert(this.output.stdout.match(/'main' \(sha \S+\) => 'branch' \(sha \S+\)/));
         assert(this.output.stdout.includes("git:"));
     });
 
@@ -100,7 +99,7 @@ describe("cli e2e", function() {
 
         await sizewatcher();
 
-        assert.strictEqual(lastExitCode, undefined);
+        assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
         assert(!this.output.any.includes("node_modules: measurement error"));
         assert(this.output.stdout.includes("+ ✅  node_modules:"));
     });
@@ -110,7 +109,7 @@ describe("cli e2e", function() {
 
         await sizewatcher();
 
-        assert.strictEqual(lastExitCode, undefined);
+        assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
         assert(!this.output.any.includes("node_modules: measurement error"));
         assert(this.output.stdout.includes("+ ✅  node_modules:"));
     });
@@ -120,7 +119,7 @@ describe("cli e2e", function() {
 
         await sizewatcher();
 
-        assert.strictEqual(lastExitCode, undefined);
+        assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
         assert(!this.output.any.includes("node_modules: measurement error"));
         assert(this.output.stdout.includes("+ 🎉  node_modules: -100.0%"));
     });
@@ -130,7 +129,7 @@ describe("cli e2e", function() {
 
         await sizewatcher();
 
-        assert.strictEqual(lastExitCode, undefined);
+        assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
         assert(!this.output.any.includes("node_modules: measurement error"));
         assert(this.output.stdout.includes("+ ❌  node_modules: 100.0%"));
     });
