@@ -14,4 +14,7 @@
 
 module.exports = {
     "extends": "@adobe/eslint-config-asset-compute",
+    "parserOptions": {
+        "ecmaVersion": 2020
+    }
 };

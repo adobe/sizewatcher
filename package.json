@@ -41,7 +41,7 @@
     "@octokit/rest": "19.0.3",
     "debug": "4.4.0",
     "deepmerge": "4.3.1",
-    "du": "1.0.0",
+    "get-folder-size": "5.0.0",
     "glob": "10.3.5",
     "js-yaml": "4.1.0",
     "pretty-bytes": "5.6.0",
