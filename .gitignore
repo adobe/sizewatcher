@@ -1,3 +1,6 @@
+# Project specific config
+*.sizewatcher.yml
+
 # Logs
 logs
 *.log
