@@ -107,7 +107,10 @@ describe("cli e2e", function() {
 
         assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
         assert(this.output.stdout.match(/'branch' \(sha \S+\) => 'branch2' \(sha \S+\)/));
-        assert(this.output.stdout.includes("+ ✅  git: 26.0% (173 B => 218 B)"));
+        // not validating actual percentage numbers because
+        // size measurement is different in CircleCI vs. Github Actions (different Linux & file systems?)
+        assert(this.output.stdout.includes("+ ✅  git:"));
+        // assert(this.output.stdout.includes("+ ✅  git: 26.0% (173 B => 218 B)"));
         assert(this.output.stdout.match(/Largest files among new changes:\n\n +14B file3\n\n\nDone./));
     });
 
