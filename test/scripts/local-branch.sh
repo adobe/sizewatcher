@@ -20,9 +20,14 @@ echo "hello2" > file
 git add file
 git commit -a -m "branch commit"
 
+git rev-parse HEAD > ../before.hash
+
 git checkout main
 
 git checkout -b branch2
 echo "another hello" > file3
 git add file3
 git commit -a -m "branch commit 2"
+
+# need the commit hash in the js code, and it's different each run
+git rev-parse HEAD > ../commit.hash

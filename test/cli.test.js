@@ -13,6 +13,7 @@
 'use strict';
 
 const assert = require("assert");
+const fs = require("fs");
 const path = require("path");
 const tmp = require("tmp");
 tmp.setGracefulCleanup();
@@ -33,6 +34,14 @@ function cleanEnvVars() {
     delete process.env.TRAVIS_BRANCH;
     delete process.env.CIRCLECI;
     delete process.env.CIRCLE_BRANCH;
+}
+
+function getBeforeSha(dir=".") {
+    return fs.readFileSync(path.join(dir, "before.hash")).toString().trim();
+}
+
+function getAfterSha(dir=".") {
+    return fs.readFileSync(path.join(dir, "commit.hash")).toString().trim();
 }
 
 describe("cli e2e", function() {
@@ -89,8 +98,11 @@ describe("cli e2e", function() {
 
         await sizewatcher();
 
+        const beforeSha = getBeforeSha("..");
+        const afterSha = getAfterSha("..");
+
         assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
-        assert(this.output.stdout.match(/'main' \(sha \S+\) => 'new' \(sha \S+\)/));
+        assert(this.output.stdout.match(new RegExp(`'main' \\(sha ${beforeSha}\\) => 'new' \\(sha ${afterSha}\\)`)));
         assert(this.output.stdout.includes("+ ✅  git: 0.0%"));
         assert(!this.output.stdout.includes('Largest files among new changes:'));
     });
@@ -105,8 +117,11 @@ describe("cli e2e", function() {
 
         await sizewatcher(["branch", "branch2"]);
 
+        const beforeSha = getBeforeSha("..");
+        const afterSha = getAfterSha("..");
+
         assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
-        assert(this.output.stdout.match(/'branch' \(sha \S+\) => 'branch2' \(sha \S+\)/));
+        assert(this.output.stdout.match(new RegExp(`'branch' \\(sha ${beforeSha}\\) => 'branch2' \\(sha ${afterSha}\\)`)));
         // not validating actual percentage numbers because
         // size measurement is different in CircleCI vs. Github Actions (different Linux & file systems?)
         assert(this.output.stdout.includes(" git:"));
@@ -114,7 +129,7 @@ describe("cli e2e", function() {
         assert(this.output.stdout.match(/Largest files among new changes:\n\n +14B file3\n\n\nDone./));
     });
 
-    it("fork PR (github actions)", async function() {
+    it("github actions PR", async function() {
         process.env.CI = "true";
         process.env.GITHUB_ACTIONS = true;
         process.env.GITHUB_BASE_REF = "main";
@@ -125,8 +140,11 @@ describe("cli e2e", function() {
 
         await sizewatcher();
 
+        const beforeSha = getBeforeSha("..");
+        const afterSha = getAfterSha("..");
+
         assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
-        assert(this.output.stdout.match(/'main' \(sha \S+\) => 'branch2' \(sha \S+\)/));
+        assert(this.output.stdout.match(new RegExp(`'main' \\(sha ${beforeSha}\\) => 'branch2' \\(sha ${afterSha}\\)`)));
         assert(this.output.stdout.includes("git:"));
         // this is meant to catch the whole git comparator "new changes" output
         assert(this.output.stdout.match(/Largest files among new changes:\n\n +14B file3\n\n\nDone./));
