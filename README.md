@@ -33,7 +33,6 @@ While any custom file or folder path can be measured via configuration, various 
 
 `sizewatcher` runs as part of your CI and reports results as comment on the pull request or as github commit status (optional), allowing to block PRs if a certain threshold was exceeded.
 
-:warning: **The git size comparison feature (the `git` comparator) is currently not calculating correct values (as of 1.2.1). See [issue #52](https://github.com/adobe/sizewatcher/issues/52) for more details.**
 
 This is an example of a `sizewatcher` Github PR comment with a failure (ignore the small numbers):
 
@@ -436,17 +435,32 @@ comparators:
 
 ### git
 
-Compares the size of the git repository by measuring the `.git` folder. Useful to detect if large files are added to the repo.
+Compares the size of the git repository by measuring the total size of the checked out folder (without the `.git` folder or any build artifacts since it runs first on a clean checkout). Useful to detect if large files are added to the repo.
 
 Name: `git`
 
 Trigger: Runs if a `.git` directory is found.
 
-Details: Shows the largest files (git objects) added in the PR:
+Details: Shows the largest files (git objects) in the entire repository and added in the PR:
 
 ---
-Largest files in new changes:
+Largest files:
 ```
+Largest files in repository checkout:
+
+   356KiB package-lock.json
+    26KiB README.md
+    11KiB LICENSE
+   5.8KiB lib/compare.js
+   5.8KiB lib/checkout.js
+   5.0KiB test/mocha-capture-console.js
+   4.7KiB test/cli.test.js
+   4.5KiB lib/report.js
+   4.3KiB test/config.test.js
+   3.8KiB lib/render.js
+
+Largest files among new changes:
+
 710a7c687b06  2.8KiB lib/render.js
 0a8f1a2ddb4f  2.4KiB test/config.test.js
 6846cf298cd4  2.3KiB test/config.test.js
