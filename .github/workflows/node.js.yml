@@ -27,9 +27,9 @@ jobs:
         check-latest: true
     - run: npm install
     - run: npm run sizewatcher
-    - run: npm test
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - run: npm test
     - name: Coveralls
       uses: coverallsapp/github-action@master
       if: ${{ matrix.node-version == 'lts/*' }}
