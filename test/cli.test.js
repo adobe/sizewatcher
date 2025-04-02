@@ -23,6 +23,18 @@ enableMochaCaptureConsole();
 
 const PROJECT_DIR = path.resolve(".");
 
+function cleanEnvVars() {
+    delete process.env.CI;
+    delete process.env.GITHUB_ACTIONS;
+    delete process.env.GITHUB_BASE_REF;
+    delete process.env.GITHUB_HEAD_REF;
+    delete process.env.TRAVIS;
+    delete process.env.TRAVIS_PULL_REQUEST_BRANCH;
+    delete process.env.TRAVIS_BRANCH;
+    delete process.env.CIRCLECI;
+    delete process.env.CIRCLE_BRANCH;
+}
+
 describe("cli e2e", function() {
 
     // full sizewatcher runs can be longer
@@ -33,6 +45,8 @@ describe("cli e2e", function() {
     let lastExitCode;
 
     beforeEach(function() {
+        cleanEnvVars();
+
         // switch into a clean new temporary directory
         const tmpDir = tmp.dirSync({unsafeCleanup: true}).name;
         process.chdir(tmpDir);
@@ -44,6 +58,8 @@ describe("cli e2e", function() {
 
     afterEach(function() {
         process.exit = originalExit;
+
+        cleanEnvVars();
     });
 
     it("help", async function() {
