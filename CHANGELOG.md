@@ -16,8 +16,9 @@ Improvements:
 
 Fixes:
 
-- [#108](https://github.com/adobe/sizewatcher/pull/108)  git comparator reporting incorrect deltas. now count files in checkout instead of .git folder for consistent sizes
-- [#97](https://github.com/adobe/sizewatcher/pull/97) fix: node version 20+ test failures
+- [#108](https://github.com/adobe/sizewatcher/pull/108) Git comparator reporting incorrect deltas. now count files in checkout instead of .git folder for consistent sizes
+- [#112](https://github.com/adobe/sizewatcher/pull/112) Node-modules: replace broken cost-of-modules with howfat for better largest modules reporting
+- [#97](https://github.com/adobe/sizewatcher/pull/97) Fix node version 20+ test failures
 
 ## 1.3.0
 
