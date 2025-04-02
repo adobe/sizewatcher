@@ -20,7 +20,7 @@ const Git = require("simple-git");
 const { enableMochaCaptureConsole, exec } = require("./mocha-capture-console");
 enableMochaCaptureConsole();
 
-async function run(dir, beforeBranch='main', afterBranch) {
+async function run(dir, beforeBranch, afterBranch) {
     // prepare
     await exec("../setup.sh", dir);
     const commitSha = fs.readFileSync(path.join(dir, "build", "commit.hash")).toString().trim();
@@ -34,8 +34,17 @@ async function run(dir, beforeBranch='main', afterBranch) {
     assert.notEqual(before.dir, after.dir);
     assert(fs.existsSync(before.dir));
     assert(fs.existsSync(after.dir));
-    assert.equal(await Git(before.dir).revparse(["--abbrev-ref", "HEAD"]), "main");
-    assert.equal(await Git(after.dir).revparse(["HEAD"]), commitSha);
+
+    // assert BEFORE checkout contents
+    assert.equal(await Git(before.dir).revparse(["--abbrev-ref", "HEAD"]), beforeBranch || "main");
+    assert.deepStrictEqual(fs.readdirSync(before.dir), [".git", "file"]);
+    assert.equal(fs.readFileSync(path.join(before.dir, "file")).toString(), "hello\n");
+
+    // assert AFTER checkout contents
+    // because of GH actions doing a merge commit with a different sha, we cannot assert on the commitSha...
+    // assert.equal(await Git(before.dir).revparse([afterBranch]), commitSha);
+    assert.deepStrictEqual(fs.readdirSync(after.dir), [".git", "file"]);
+    assert.equal(fs.readFileSync(path.join(after.dir, "file")).toString(), "ON branch\n");
 }
 
 function cleanEnvVars() {
@@ -80,16 +89,11 @@ describe("checkout", function() {
     it("handles circleci checkouts", async function() {
         process.env.CI = "true";
         process.env.CIRCLECI = true;
+        process.env.CIRCLE_BRANCH = "branch";
         await run("test/checkout/circleci");
     });
 
     it("handles github action checkouts", async function() {
-        process.env.CI = "true";
-        process.env.GITHUB_ACTIONS = true;
-        await run("test/checkout/githubactions");
-    });
-
-    it("handles github action fork PR checkouts", async function() {
         process.env.CI = "true";
         process.env.GITHUB_ACTIONS = true;
         process.env.GITHUB_BASE_REF = "main";
