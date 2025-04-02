@@ -4,7 +4,7 @@
 
 Major changes:
 
-- [#106](https://github.com/adobe/sizewatcher/issues/106) Require at least node 18 (last version we can make work with being a CommonJS module)
+- [#106](https://github.com/adobe/sizewatcher/issues/106) Require at least node 18. Was 12 before. Node 18 is last version we can make work with being a CommonJS module.
 
 Improvements:
 
@@ -16,7 +16,7 @@ Improvements:
 
 Fixes:
 
-- [#108](https://github.com/adobe/sizewatcher/pull/108) Git comparator reporting incorrect deltas. now count files in checkout instead of .git folder for consistent sizes
+- [#108](https://github.com/adobe/sizewatcher/pull/108) [#113](https://github.com/adobe/sizewatcher/pull/113) Git comparator reporting incorrect deltas. now count files in checkout instead of .git folder for consistent sizes
 - [#112](https://github.com/adobe/sizewatcher/pull/112) Node-modules: replace broken cost-of-modules with howfat for better largest modules reporting
 - [#97](https://github.com/adobe/sizewatcher/pull/97) Fix node version 20+ test failures
 
@@ -24,7 +24,7 @@ Fixes:
 
 Improvements:
 
-- [#87](https://github.com/adobe/sizewatcher/issues/87) Drop node 10 support #87
+- [#87](https://github.com/adobe/sizewatcher/issues/87) Drop node 10 support
 - Various dependency updates
 
 ## 1.2.1
