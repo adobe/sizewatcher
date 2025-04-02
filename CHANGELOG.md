@@ -16,6 +16,7 @@ Improvements:
 
 Fixes:
 
+- [#108](https://github.com/adobe/sizewatcher/pull/108)  git comparator reporting incorrect deltas. now count files in checkout instead of .git folder for consistent sizes
 - [#97](https://github.com/adobe/sizewatcher/pull/97) fix: node version 20+ test failures
 
 ## 1.3.0
