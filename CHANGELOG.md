@@ -1,5 +1,41 @@
 # Changelog
 
+## 1.4.0
+
+Major changes:
+
+- [#106](https://github.com/adobe/sizewatcher/issues/106) Require at least node 18 (last version we can make work with being a CommonJS module)
+
+Improvements:
+
+- Upgrade dependencies (many major bumps)
+- Added renovate
+- [#98](https://github.com/adobe/sizewatcher/pull/98) CI: drop `.travis.yml`, was not running on Travis CI for years anyway
+- [#101](https://github.com/adobe/sizewatcher/pull/101) fixed package.json using `npm pkg fix`
+- CI: various CI improvements
+
+Fixes:
+
+- [#97](https://github.com/adobe/sizewatcher/pull/97) fix: node version 20+ test failures
+
+## 1.3.0
+
+Improvements:
+
+- [#87](https://github.com/adobe/sizewatcher/issues/87) Drop node 10 support #87
+- Various dependency updates
+
+## 1.2.1
+
+Important bug fixes.
+
+Fixes:
+
+- [#63](https://github.com/adobe/sizewatcher/issues/63) fix and improve git checkout logic
+- [#62](https://github.com/adobe/sizewatcher/issues/62) fix failure on fork PRs
+- [#53](https://github.com/adobe/sizewatcher/issues/53) sizewatcher fails if there is no "package.json" file in the main branch, or if a package.json has no dependencies and thus node_modules is missing
+- [#74](https://github.com/adobe/sizewatcher/issues/74) improve delta calculation (showed weird negative values in some cases)
+
 ## 1.2.0
 
 Improvements:

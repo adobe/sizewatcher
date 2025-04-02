@@ -1,6 +1,9 @@
 .circleci
 .github
 .travis.yml
+.shellcheckrc
+renovate.json
+*.sizewatcher.yml
 
 CODE_OF_CONDUCT.md
 NOTES.md
