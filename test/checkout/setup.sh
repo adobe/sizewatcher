@@ -14,8 +14,9 @@ git config --local user.name "Your Name"
 echo "hello" > file
 git add file
 git commit -a -m "initial commit"
-git checkout -b branch 2> /dev/null
-echo "hello world" > file
+
+git checkout -b branch
+echo "ON branch" > file
 git commit -a -m "branch commit"
 
 # need the commit hash in the js code, and it's different each run

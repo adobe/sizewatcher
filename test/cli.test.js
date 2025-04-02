@@ -13,6 +13,7 @@
 'use strict';
 
 const assert = require("assert");
+const fs = require("fs");
 const path = require("path");
 const tmp = require("tmp");
 tmp.setGracefulCleanup();
@@ -22,6 +23,26 @@ const { enableMochaCaptureConsole, exec } = require("./mocha-capture-console");
 enableMochaCaptureConsole();
 
 const PROJECT_DIR = path.resolve(".");
+
+function cleanEnvVars() {
+    delete process.env.CI;
+    delete process.env.GITHUB_ACTIONS;
+    delete process.env.GITHUB_BASE_REF;
+    delete process.env.GITHUB_HEAD_REF;
+    delete process.env.TRAVIS;
+    delete process.env.TRAVIS_PULL_REQUEST_BRANCH;
+    delete process.env.TRAVIS_BRANCH;
+    delete process.env.CIRCLECI;
+    delete process.env.CIRCLE_BRANCH;
+}
+
+function getBeforeSha(dir=".") {
+    return fs.readFileSync(path.join(dir, "before.hash")).toString().trim();
+}
+
+function getAfterSha(dir=".") {
+    return fs.readFileSync(path.join(dir, "commit.hash")).toString().trim();
+}
 
 describe("cli e2e", function() {
 
@@ -33,6 +54,8 @@ describe("cli e2e", function() {
     let lastExitCode;
 
     beforeEach(function() {
+        cleanEnvVars();
+
         // switch into a clean new temporary directory
         const tmpDir = tmp.dirSync({unsafeCleanup: true}).name;
         process.chdir(tmpDir);
@@ -44,6 +67,8 @@ describe("cli e2e", function() {
 
     afterEach(function() {
         process.exit = originalExit;
+
+        cleanEnvVars();
     });
 
     it("help", async function() {
@@ -63,8 +88,8 @@ describe("cli e2e", function() {
         assert(this.output.stderr.includes("Error: Not inside a git checkout"));
     });
 
-    it("local branch", async function() {
-        await exec(path.join(PROJECT_DIR, "test/scripts/local-branch.sh"));
+    it("local branch no commit", async function() {
+        await exec(path.join(PROJECT_DIR, "test/scripts/local-branch-no-commit.sh"));
 
         // we simulate a local repo and run, ensure these vars from CIs are not set
         delete process.env.GITHUB_BASE_REF;
@@ -73,25 +98,56 @@ describe("cli e2e", function() {
 
         await sizewatcher();
 
+        const beforeSha = getBeforeSha("..");
+        const afterSha = getAfterSha("..");
+
         assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
-        assert(this.output.stdout.match(/'main' \(sha \S+\) => 'new' \(sha \S+\)/));
+        assert(this.output.stdout.match(new RegExp(`'main' \\(sha ${beforeSha}\\) => 'new' \\(sha ${afterSha}\\)`)));
         assert(this.output.stdout.includes("+ ✅  git: 0.0%"));
+        assert(!this.output.stdout.includes('Largest files among new changes:'));
     });
 
-    it("fork PR (github actions)", async function() {
+    it("local branch", async function() {
+        await exec(path.join(PROJECT_DIR, "test/scripts/local-branch.sh"));
+
+        // we simulate a local repo and run, ensure these vars from CIs are not set
+        delete process.env.GITHUB_BASE_REF;
+        delete process.env.TRAVIS_PULL_REQUEST;
+        delete process.env.TRAVIS_BRANCH;
+
+        await sizewatcher(["branch", "branch2"]);
+
+        const beforeSha = getBeforeSha("..");
+        const afterSha = getAfterSha("..");
+
+        assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
+        assert(this.output.stdout.match(new RegExp(`'branch' \\(sha ${beforeSha}\\) => 'branch2' \\(sha ${afterSha}\\)`)));
+        // not validating actual percentage numbers because
+        // size measurement is different in CircleCI vs. Github Actions (different Linux & file systems?)
+        assert(this.output.stdout.includes(" git:"));
+        // assert(this.output.stdout.includes("+ ✅  git: 26.0% (173 B => 218 B)"));
+        assert(this.output.stdout.match(/Largest files among new changes:\n\n +14B file3\n\n\nDone./));
+    });
+
+    it("github actions PR", async function() {
         process.env.CI = "true";
         process.env.GITHUB_ACTIONS = true;
         process.env.GITHUB_BASE_REF = "main";
-        process.env.GITHUB_HEAD_REF = "branch";
+        process.env.GITHUB_HEAD_REF = "branch2";
 
         await exec(path.join(PROJECT_DIR, "test/scripts/fork.sh"));
         process.chdir("checkout");
 
         await sizewatcher();
 
+        const beforeSha = getBeforeSha("..");
+        const afterSha = getAfterSha("..");
+
         assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
-        assert(this.output.stdout.match(/'main' \(sha \S+\) => 'branch' \(sha \S+\)/));
+        assert(this.output.stdout.match(new RegExp(`'main' \\(sha ${beforeSha}\\) => 'branch2' \\(sha ${afterSha}\\)`)));
         assert(this.output.stdout.includes("git:"));
+        // this is meant to catch the whole git comparator "new changes" output
+        assert(this.output.stdout.match(/Largest files among new changes:\n\n +14B file3\n\n\nDone./));
     });
 
     it("no package.json in before branch", async function() {
@@ -102,6 +158,7 @@ describe("cli e2e", function() {
         assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
         assert(!this.output.any.includes("node_modules: measurement error"));
         assert(this.output.stdout.includes("+ ✅  node_modules:"));
+        assert(this.output.stdout.match(/Largest files among new changes:\n\n +27B package.json\n\n/));
     });
 
     it("no package.json in after branch", async function() {
@@ -112,6 +169,7 @@ describe("cli e2e", function() {
         assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
         assert(!this.output.any.includes("node_modules: measurement error"));
         assert(this.output.stdout.includes("+ ✅  node_modules:"));
+        assert(!this.output.stdout.includes('Largest files among new changes:'));
     });
 
     it("package.json with dependencies removed", async function() {
@@ -122,6 +180,7 @@ describe("cli e2e", function() {
         assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
         assert(!this.output.any.includes("node_modules: measurement error"));
         assert(this.output.stdout.includes("+ 🎉  node_modules: -100.0%"));
+        assert(!this.output.stdout.includes('Largest files among new changes:'));
     });
 
     it("package.json with dependencies added", async function() {
@@ -132,5 +191,6 @@ describe("cli e2e", function() {
         assert.strictEqual(lastExitCode, undefined, `non-zero exit code: ${lastExitCode}`);
         assert(!this.output.any.includes("node_modules: measurement error"));
         assert(this.output.stdout.includes("+ ❌  node_modules: 100.0%"));
+        assert(this.output.stdout.match(/Largest files among new changes:\n\n +64B package.json\n\n/));
     });
 });
