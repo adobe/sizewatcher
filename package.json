@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@octokit/rest": "19.0.3",
-    "debug": "4.4.1",
+    "debug": "4.4.3",
     "deepmerge": "4.3.1",
     "get-folder-size": "5.0.0",
     "glob": "10.3.5",
