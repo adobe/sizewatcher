@@ -51,6 +51,6 @@
     "xbytes": "1.9.1"
   },
   "overrides": {
-    "whatwg-url": "^14.0.0"
+    "whatwg-url": "^15.0.0"
   }
 }
