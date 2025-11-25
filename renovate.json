@@ -15,7 +15,8 @@
       "glob",
       "pretty-bytes",
       "eslint",
-      "supports-color"
+      "supports-color",
+      "whatwg-url"
     ],
     "packageRules": [
       {

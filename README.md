@@ -461,12 +461,7 @@ Largest files in repository checkout:
 
 Largest files among new changes:
 
-710a7c687b06  2.8KiB lib/render.js
-0a8f1a2ddb4f  2.4KiB test/config.test.js
-6846cf298cd4  2.3KiB test/config.test.js
-a643d322cc26  1.5KiB lib/config.js
-933e4432aae5     73B .sizewatcher.yml
-6db7d5c27a66     69B .sizewatcher.yml
+ 3.0KiB CHANGELOG.md
 ```
 ---
 
