@@ -511,13 +511,13 @@ Configuration: supports `dir`
 
 ### npm_package
 
-Compares the size of an npm package tarball by running `npm publish --dry-run`.
+Compares the size of an npm package tarball by running `npm pack --dry-run`.
 
 Name: `npm_package`
 
 Trigger: Runs if a `package.json` is found.
 
-Details: Prints the package contents and metadata using the output of `npm publish --dry-run`.
+Details: Prints the package contents and metadata using the output of `npm pack --dry-run`.
 
 ---
 Package contents:
