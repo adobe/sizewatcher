@@ -1,7 +1,6 @@
 [![Version](https://img.shields.io/npm/v/@adobe/sizewatcher.svg)](https://npmjs.org/package/@adobe/sizewatcher)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Coverage Status](https://coveralls.io/repos/github/adobe/sizewatcher/badge.svg)](https://coveralls.io/github/adobe/sizewatcher)
-[![Travis](https://travis-ci.com/adobe/sizewatcher.svg?branch=main)](https://travis-ci.com/adobe/sizewatcher)
 [![CircleCI](https://circleci.com/gh/adobe/sizewatcher.svg?style=shield)](https://circleci.com/gh/adobe/sizewatcher)
 [![Github Actions Node.js CI Status](https://github.com/adobe/sizewatcher/workflows/Node.js%20CI/badge.svg)](https://github.com/adobe/sizewatcher/actions?query=workflow%3A%22Node.js+CI%22)
 [![CodeQL Status](https://github.com/adobe/sizewatcher/workflows/CodeQL/badge.svg)](https://github.com/adobe/sizewatcher/actions?query=workflow%3ACodeQL)
