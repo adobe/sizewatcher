@@ -17,8 +17,8 @@ const path = require("path");
 const fs = require("fs");
 const assert = require("assert");
 const Git = require("simple-git");
-const { enableMochaCaptureConsole, exec } = require("./mocha-capture-console");
-enableMochaCaptureConsole();
+const { describe, it, beforeEach, afterEach } = require("node:test");
+const { captured, exec } = require("./capture-console");
 
 async function run(dir, beforeBranch, afterBranch) {
     // prepare
@@ -59,9 +59,10 @@ function cleanEnvVars() {
     delete process.env.CIRCLE_BRANCH;
 }
 
-describe("checkout", function() {
+// clones are local and fast, but node:test has no default timeout
+const TIMEOUT = { timeout: 10 * 1000 };
 
-    this.captureConsole = true;
+describe("checkout", function() {
 
     beforeEach(function() {
         cleanEnvVars();
@@ -71,33 +72,33 @@ describe("checkout", function() {
         cleanEnvVars();
     });
 
-    it("handles normal checkouts", async function() {
+    it("handles normal checkouts", TIMEOUT, captured(async () => {
         await run("test/checkout/normal");
-    });
+    }));
 
-    it("handles local cli invocation with before and after branch specified", async function() {
+    it("handles local cli invocation with before and after branch specified", TIMEOUT, captured(async () => {
         // local checkout will be on some commit that is NOT branch 'branch'
         await run("test/checkout/local", "main", "branch");
-    });
+    }));
 
-    it("handles travis checkouts", async function() {
+    it("handles travis checkouts", TIMEOUT, captured(async () => {
         process.env.CI = "true";
         process.env.TRAVIS = true;
         await run("test/checkout/travis");
-    });
+    }));
 
-    it("handles circleci checkouts", async function() {
+    it("handles circleci checkouts", TIMEOUT, captured(async () => {
         process.env.CI = "true";
         process.env.CIRCLECI = true;
         process.env.CIRCLE_BRANCH = "branch";
         await run("test/checkout/circleci");
-    });
+    }));
 
-    it("handles github action checkouts", async function() {
+    it("handles github action checkouts", TIMEOUT, captured(async () => {
         process.env.CI = "true";
         process.env.GITHUB_ACTIONS = true;
         process.env.GITHUB_BASE_REF = "main";
         process.env.GITHUB_HEAD_REF = "branch";
         await run("test/checkout/githubactions");
-    });
+    }));
 });
