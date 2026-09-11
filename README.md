@@ -319,7 +319,7 @@ For [CircleCI](https://circleci.com) you need to
 Example `.circleci/config.yml`:
 
 ```yaml
-version: 2
+version: 2.1
 
 jobs:
   build:
@@ -330,6 +330,11 @@ jobs:
 
       # ---------- this runs sizewatcher ------------
       - run: npx @adobe/sizewatcher
+
+workflows:
+  build-and-test:
+    jobs:
+      - build
 ```
 
 ### Other CIs
