@@ -13,6 +13,7 @@
 'use strict';
 
 module.exports = {
+    "root": true,
     "extends": "@adobe/eslint-config-asset-compute",
     "parserOptions": {
         "ecmaVersion": 2020
