@@ -49,6 +49,17 @@
         ]
       },
       {
+        "description": "mocha 12+ and nyc 18+ require node 20+, but sizewatcher still supports node 18",
+        "matchPackageNames": [
+          "mocha",
+          "nyc"
+        ],
+        "matchUpdateTypes": [
+          "major"
+        ],
+        "enabled": false
+      },
+      {
         "matchDatasources": [
           "orb"
         ],
