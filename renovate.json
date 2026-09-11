@@ -9,15 +9,20 @@
     ],
     "timezone": "America/Los_Angeles",
     "branchPrefix": "renovate-",
-    "ignoreDeps": [
-      "simple-git",
-      "@octokit/rest",
-      "glob",
-      "pretty-bytes",
-      "eslint",
-      "supports-color",
-      "whatwg-url"
-    ],
+    "lockFileMaintenance": {
+      "enabled": true,
+      "automerge": true,
+      "schedule": [
+        "after 2pm on Saturday"
+      ]
+    },
+    "vulnerabilityAlerts": {
+      "enabled": true,
+      "labels": [
+        "security"
+      ]
+    },
+    "osvVulnerabilityAlerts": true,
     "packageRules": [
       {
         "groupName": "minor and patch version changes",
@@ -49,15 +54,18 @@
         ]
       },
       {
-        "description": "mocha 12+ and nyc 18+ require node 20+, but sizewatcher still supports node 18",
+        "description": "@octokit/rest 21+ is ESM-only and 22+ requires node 20. sizewatcher is CommonJS and supports node 18 at runtime.",
         "matchPackageNames": [
-          "mocha",
-          "nyc"
+          "@octokit/rest"
         ],
-        "matchUpdateTypes": [
-          "major"
+        "allowedVersions": "<21"
+      },
+      {
+        "description": "pretty-bytes 6+ is ESM-only. sizewatcher is CommonJS and supports node 18 at runtime.",
+        "matchPackageNames": [
+          "pretty-bytes"
         ],
-        "enabled": false
+        "allowedVersions": "<6"
       },
       {
         "matchDatasources": [
