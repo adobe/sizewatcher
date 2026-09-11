@@ -49,5 +49,15 @@
     "simple-git": "3.36.0",
     "tmp": "0.2.7",
     "xbytes": "1.9.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^20.19.0 || ^22.13.0 || >=24",
+      "onFail": "error"
+    }
   }
 }
