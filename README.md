@@ -675,3 +675,4 @@ How to create a new release of version `1.4` (as example):
 ## Licensing
 
 This project is licensed under the Apache V2 License. See [LICENSE](LICENSE) for more information.
+
