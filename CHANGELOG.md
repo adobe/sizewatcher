@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+Major changes:
+
+- Working on sizewatcher requires Node.js LTS (20.19+) now, as eslint 10 and c8 do not support Node.js 18 anymore. Runtime support for Node.js 18+ is unchanged and verified in CI with only the runtime dependencies installed.
+
+Improvements:
+
+- Security: update `simple-git` (3.36.0, fixes a critical advisory), `@octokit/rest` (20.1.2), `glob` (13.0.6) and all transitive dependencies, resolving all open Dependabot alerts
+- Tests use the built-in `node --test` runner and `c8` for coverage instead of `mocha`, `nyc` and `coveralls`
+- ESLint 10 with flat config (`eslint.config.mjs`) and `eslint-config-problems` instead of the unmaintained `@adobe/eslint-config-asset-compute`
+- Renovate: package rules with version ceilings instead of `ignoreDeps`, weekly lockfile maintenance and vulnerability alert PRs
+- `package.json` declares `engines` (runtime) and `devEngines` (development)
+
+Fixes:
+
+- Error message of a failing `npx howfat` run included stdout twice instead of stderr
+
 ## 1.4.0
 
 Major changes:
