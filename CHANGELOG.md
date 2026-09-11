@@ -18,6 +18,37 @@ Fixes:
 
 - Error message of a failing `npx howfat` run included stdout twice instead of stderr
 
+## 1.4.2
+
+Fixes:
+
+- [#143](https://github.com/adobe/sizewatcher/pull/143) Handle empty or comments-only `.sizewatcher.yml` config file gracefully after js-yaml 5 upgrade
+- [#150](https://github.com/adobe/sizewatcher/pull/150) Fix tests on Node 26.8+ by replacing mock-fs with real temp directories
+
+Improvements:
+
+- [#143](https://github.com/adobe/sizewatcher/pull/143) Upgrade js-yaml to v5.4.1 (major version, includes security fixes)
+- [#139](https://github.com/adobe/sizewatcher/pull/139) [#140](https://github.com/adobe/sizewatcher/pull/140) Upgrade tmp to v0.2.7 (security fixes)
+- [#151](https://github.com/adobe/sizewatcher/pull/151) CI: update CircleCI config to version 2.1, README example uses `cimg/node:lts` image
+- [#152](https://github.com/adobe/sizewatcher/pull/152) Set `root: true` in ESLint config
+- CI: update GitHub actions to v7, disable fail-fast on node version matrix
+- Renovate: keep mocha 11 and nyc 17 to retain Node 18 support
+- Various dev dependency updates
+
+## 1.4.1
+
+Fixes:
+
+- [#136](https://github.com/adobe/sizewatcher/pull/136) [#116](https://github.com/adobe/sizewatcher/issues/116) npm_package: use `npm pack` instead of `npm publish --dry-run`
+
+Improvements:
+
+- [#123](https://github.com/adobe/sizewatcher/pull/123) Update tmp to v0.2.4 (security fix)
+- [#133](https://github.com/adobe/sizewatcher/pull/133) Update js-yaml to v4.1.1 (security fix)
+- [#128](https://github.com/adobe/sizewatcher/pull/128) Update debug to v4.4.3
+- [#130](https://github.com/adobe/sizewatcher/pull/130) Renovate: ignore whatwg-url from package.json overrides
+- [#134](https://github.com/adobe/sizewatcher/pull/134) Update mocha to v11.7.5
+
 ## 1.4.0
 
 Major changes:
