@@ -38,19 +38,16 @@
     "globals": "^17.12.0"
   },
   "dependencies": {
-    "@octokit/rest": "19.0.3",
+    "@octokit/rest": "20.1.2",
     "debug": "4.4.3",
     "deepmerge": "4.3.1",
     "get-folder-size": "5.0.0",
-    "glob": "10.3.5",
+    "glob": "13.0.6",
     "js-yaml": "5.4.1",
     "pretty-bytes": "5.6.0",
     "require-dir": "1.2.0",
-    "simple-git": "3.22.0",
+    "simple-git": "3.36.0",
     "tmp": "0.2.7",
     "xbytes": "1.9.1"
-  },
-  "overrides": {
-    "whatwg-url": "14.2.0"
   }
 }
