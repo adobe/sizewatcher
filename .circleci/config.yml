@@ -18,17 +18,18 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-{{ checksum "package-lock.json" }}
             - v1-dependencies-
       - run: node --version
-      - run: npm install
+      - run: npm ci
       - save_cache:
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - ~/.npm
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
 
       - run: npm run sizewatcher
       - run: npm test
+      - run: npm run lint
 
 workflows:
   build-and-test:
