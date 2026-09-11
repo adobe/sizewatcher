@@ -13,17 +13,38 @@
 'use strict';
 
 const assert = require("assert");
-const mockFs = require("mock-fs");
+const fs = require("fs");
+const path = require("path");
+const tmp = require("tmp");
+tmp.setGracefulCleanup();
+
 const config = require("../lib/config");
+
+const CONFIG_FILE = ".sizewatcher.yml";
+
+// switch into a clean new temporary directory, optionally with a config file
+function mockConfig(content) {
+    const tmpDir = tmp.dirSync({unsafeCleanup: true}).name;
+    process.chdir(tmpDir);
+    if (content !== undefined) {
+        fs.writeFileSync(path.join(tmpDir, CONFIG_FILE), content);
+    }
+}
 
 describe("config", function() {
 
+    let originalCwd;
+
+    beforeEach(function() {
+        originalCwd = process.cwd();
+    });
+
     afterEach(function() {
-        mockFs.restore();
+        process.chdir(originalCwd);
     });
 
     it("loads default config if no config file exists", function() {
-        mockFs();
+        mockConfig();
         const cfg = config.reload();
         assert.strictEqual(typeof cfg, "object");
         assert.deepStrictEqual(cfg.limits, {
@@ -37,9 +58,7 @@ describe("config", function() {
     });
 
     it("loads config file that is empty", function() {
-        mockFs({
-            ".sizewatcher.yml": ""
-        });
+        mockConfig("");
         const cfg = config.reload();
         assert.strictEqual(typeof cfg, "object");
         assert.deepStrictEqual(cfg.limits, {
@@ -53,13 +72,10 @@ describe("config", function() {
     });
 
     it("loads config file with percentage limits", function() {
-        mockFs({
-            ".sizewatcher.yml":
-`
+        mockConfig(`
 limits:
     fail: 42%
-`
-        });
+`);
         const cfg = config.reload();
         assert.strictEqual(typeof cfg, "object");
         assert.deepStrictEqual(cfg.limits, {
@@ -70,15 +86,12 @@ limits:
     });
 
     it("loads config file with integer limits", function() {
-        mockFs({
-            ".sizewatcher.yml":
-`
+        mockConfig(`
 limits:
     fail: 1000
     warn: 100
     ok: 50
-`
-        });
+`);
         const cfg = config.reload();
         assert.strictEqual(typeof cfg, "object");
         assert.deepStrictEqual(cfg.limits, {
@@ -89,14 +102,11 @@ limits:
     });
 
     it("loads config file with reportStatus", function() {
-        mockFs({
-            ".sizewatcher.yml":
-`
+        mockConfig(`
 report:
     githubComment: false
     githubStatus: true
-`
-        });
+`);
         const cfg = config.reload();
         assert.strictEqual(typeof cfg, "object");
         assert.strictEqual(cfg.report.githubComment, false);
@@ -104,7 +114,7 @@ report:
     });
 
     it("returns default config in asYaml() if no config file exists", function() {
-        mockFs();
+        mockConfig();
         config.reload();
         const yaml = config.asYaml();
         assert.strictEqual(yaml, `limits:
@@ -119,15 +129,12 @@ comparators: {}
     });
 
     it("handles a single custom comparators", function() {
-        mockFs({
-            ".sizewatcher.yml":
-`
+        mockConfig(`
 comparators:
   custom:
     name: mine
     path: build/file
-`
-        });
+`);
         const cfg = config.reload();
         assert.strictEqual(typeof cfg, "object");
         assert.strictEqual(typeof cfg.comparators.custom, "object");
@@ -136,16 +143,13 @@ comparators:
     });
 
     it("handles a multiple custom comparators", function() {
-        mockFs({
-            ".sizewatcher.yml":
-`
+        mockConfig(`
 comparators:
   custom:
     - name: mine
       path: build/file
     - path: build/file2
-`
-        });
+`);
         const cfg = config.reload();
         assert.strictEqual(typeof cfg, "object");
         assert.ok(Array.isArray(cfg.comparators.custom));
