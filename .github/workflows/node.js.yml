@@ -10,6 +10,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     permissions:
       pull-requests: write
@@ -26,11 +27,31 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         check-latest: true
-    - run: npm install
+
+    # node 18 is the minimum supported runtime: install only the runtime dependencies
+    # and run the tests using the built-in node test runner
+    - name: Install runtime dependencies (node 18)
+      if: ${{ matrix.node-version == 18 }}
+      run: npm ci --omit=dev
+    # development tooling (eslint, c8) requires node LTS
+    - name: Install dependencies
+      if: ${{ matrix.node-version != 18 }}
+      run: npm ci
+
     - run: npm run sizewatcher
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - run: npm test
+
+    - name: Test (node 18)
+      if: ${{ matrix.node-version == 18 }}
+      run: npm test
+    - name: Test with coverage
+      if: ${{ matrix.node-version != 18 }}
+      run: npm run coverage
+    - name: Lint
+      if: ${{ matrix.node-version != 18 }}
+      run: npm run lint
+
     - name: Coveralls
       uses: coverallsapp/github-action@master
       if: ${{ matrix.node-version == 'lts/*' }}

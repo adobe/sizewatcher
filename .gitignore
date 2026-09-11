@@ -73,3 +73,6 @@ dist/
 
 # Important Documentation
 !.github/**
+
+# Claude Code
+.claude/worktrees/

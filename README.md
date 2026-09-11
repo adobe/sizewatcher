@@ -127,6 +127,7 @@ By default `sizewatcher` will
 
 - [Nodejs](https://nodejs.org) version 18+ (since 1.4.0)
   - recommended to use latest stable version "LTS"
+  - for working on sizewatcher itself Node.js LTS is required, see [Development](#development)
 - Github or Github Enterprise
   - if you want to run it on pull requests
 - CI system running on Github pull requests
@@ -291,7 +292,7 @@ jobs:
 
 For [Travis CI](https://travis-ci.org) you need to
 - use `language: node_js`
-  - if you already use a different language, find a way to ensure Nodejs 12+ is installed
+  - if you already use a different language, find a way to ensure Nodejs 18+ is installed
 - under `script` run `npx @adobe/sizewatcher`
 - set a secret environment variable `GITHUB_TOKEN` in the [Travis repository settings](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with a github token with permission to comment on PRs and reporting commit statuses for the repository
 
@@ -311,7 +312,7 @@ script:
 ### CircleCI
 
 For [CircleCI](https://circleci.com) you need to
-- use a docker image with Nodejs 12+ installed
+- use a docker image with Nodejs 18+ installed
   - alternatively install [using nvm](https://www.google.com/search?q=circleci+use+nvm)
 - run `npx @adobe/sizewatcher`
 - set a secret environment variable `GITHUB_TOKEN` in the [CircleCI project settings](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-project) (or in a [Context](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-context)) with a github token with permission to comment on PRs and reporting commit statuses for the repository
@@ -341,7 +342,7 @@ workflows:
 
 This is not tested well but might work.
 
-Ensure Nodejs 12+ is installed.
+Ensure Nodejs 18+ is installed.
 
 Set these environment variables in the CI job:
 
@@ -457,7 +458,7 @@ Largest files in repository checkout:
     11KiB LICENSE
    5.8KiB lib/compare.js
    5.8KiB lib/checkout.js
-   5.0KiB test/mocha-capture-console.js
+   5.0KiB test/capture-console.js
    4.7KiB test/cli.test.js
    4.5KiB lib/report.js
    4.3KiB test/config.test.js
@@ -616,6 +617,20 @@ Options:
 ## Contribute
 
 Contributions are welcome! Read the [Contributing Guide](./.github/CONTRIBUTING.md) for general guidelines.
+
+### Development
+
+Sizewatcher supports Node.js 18+ at runtime, but working on sizewatcher itself requires the current [Node.js LTS](https://nodejs.org) (20.19 or newer), since the development tooling (eslint 10, c8) does not support Node.js 18 anymore. This is enforced through [`devEngines`](https://docs.npmjs.com/cli/configuring-npm/package-json#devengines) in `package.json`. The `.nvmrc` points at `lts/*`, so `nvm use` gives you a suitable version.
+
+- `npm install` install dependencies
+- `npm test` run the tests using the built-in [node test runner](https://nodejs.org/api/test.html) (works on Node.js 18+)
+- `npm run coverage` run the tests with a coverage report using [c8](https://github.com/bcoe/c8), written to `coverage/`
+- `npm run lint` run eslint
+- `TEST_PRINT_LOGS=1 npm test` print the output of the code under test while the tests run (by default it is captured and only shown for failing tests)
+- `TEST_LOG_DISABLE_COLOR=1 npm test` disable coloring of that output
+- `npm run clean` remove test artifacts and coverage reports
+
+The CI runs the tests on Node.js 18 with only the runtime dependencies installed, and tests, coverage and lint on Node.js LTS and latest.
 
 ### New comparator
 
