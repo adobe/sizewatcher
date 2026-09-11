@@ -71,6 +71,17 @@ describe("config", function() {
         assert.strictEqual(typeof cfg.comparators, "object");
     });
 
+    it("loads config file with only comments", function() {
+        mockConfig("# nothing configured yet\n");
+        const cfg = config.reload();
+        assert.strictEqual(typeof cfg, "object");
+        assert.deepStrictEqual(cfg.limits, {
+            fail: "100%",
+            warn: "30%",
+            ok: "-10%"
+        });
+    });
+
     it("loads config file with percentage limits", function() {
         mockConfig(`
 limits:
@@ -120,7 +131,7 @@ report:
         assert.strictEqual(yaml, `limits:
   fail: 100%
   warn: 30%
-  ok: '-10%'
+  ok: -10%
 report:
   githubComment: true
   githubStatus: false
