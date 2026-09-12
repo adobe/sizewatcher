@@ -13,10 +13,13 @@ Improvements:
 - ESLint 10 with flat config (`eslint.config.mjs`) and `eslint-config-problems` instead of the unmaintained `@adobe/eslint-config-asset-compute`
 - Renovate: package rules with version ceilings instead of `ignoreDeps`, weekly lockfile maintenance and vulnerability alert PRs
 - `package.json` declares `engines` (runtime) and `devEngines` (development)
+- Test coverage raised from 73% to over 99%: unit tests for `render`, `compare`, `size`, `github` (against a local fake GitHub API server) and `report`, plus new end-to-end cases for the checkout logic (identical branches, `master`/`trunk` default branches, before commit sha, unknown branch, Travis PR and branch builds), custom comparators, `npm_package` incl. the `dir` option, `package-lock.json` and configured limits. The e2e tests clear all CI github env vars so they can never talk to the real GitHub API
 
 Fixes:
 
 - Error message of a failing `npx howfat` run included stdout twice instead of stderr
+- A measurement error (`summary: error`) set a green `success` commit status without description; it now sets an `error` status with a description
+- Fractional percentage limits such as `0.5%` were truncated to integers
 
 ## 1.4.2
 
