@@ -20,6 +20,7 @@ Fixes:
 - Error message of a failing `npx howfat` run included stdout twice instead of stderr
 - A measurement error (`summary: error`) set a green `success` commit status without description; it now sets an `error` status with a description
 - Fractional percentage limits such as `0.5%` were truncated to integers
+- A `GITHUB_API_URL` with a trailing slash (as previously shown in the README) resulted in invalid `//repos/...` API urls
 
 ## 1.4.2
 

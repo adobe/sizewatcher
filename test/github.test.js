@@ -24,6 +24,8 @@ describe("github", function() {
 
     before(async function() {
         await fake.start();
+        // trailing slash (as in a documented GITHUB_API_URL example) must not break the api urls
+        process.env.GITHUB_API_URL = `${fake.url}/`;
         github = require("../lib/github");
     });
 
