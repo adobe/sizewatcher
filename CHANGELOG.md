@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+Fixes:
+
+- CI: grant `statuses: write` to the `GITHUB_TOKEN` so the workflow can set commit statuses when `report.githubStatus` is enabled (was failing with `Resource not accessible by integration`)
+- README: document the `GITHUB_TOKEN` permissions required for Github Actions (`pull-requests: write`, `statuses: write`)
+
 ## 1.5.0
 
 Major changes:
