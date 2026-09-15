@@ -1,5 +1,58 @@
 # Changelog
 
+## Unreleased
+
+Major changes:
+
+- Working on sizewatcher requires Node.js LTS (20.19+) now, as eslint 10 and c8 do not support Node.js 18 anymore. Runtime support for Node.js 18+ is unchanged and verified in CI with only the runtime dependencies installed.
+
+Improvements:
+
+- Security: update `simple-git` (3.36.0, fixes a critical advisory), `@octokit/rest` (20.1.2), `glob` (13.0.6) and all transitive dependencies, resolving all open Dependabot alerts
+- Tests use the built-in `node --test` runner and `c8` for coverage instead of `mocha`, `nyc` and `coveralls`
+- ESLint 10 with flat config (`eslint.config.mjs`) and `eslint-config-problems` instead of the unmaintained `@adobe/eslint-config-asset-compute`
+- Renovate: package rules with version ceilings instead of `ignoreDeps`, weekly lockfile maintenance and vulnerability alert PRs
+- `package.json` declares `engines` (runtime) and `devEngines` (development)
+- Test coverage raised from 73% to over 99%: unit tests for `render`, `compare`, `size`, `github` (against a local fake GitHub API server) and `report`, plus new end-to-end cases for the checkout logic (identical branches, `master`/`trunk` default branches, before commit sha, unknown branch, Travis PR and branch builds), custom comparators, `npm_package` incl. the `dir` option, `package-lock.json` and configured limits. The e2e tests clear all CI github env vars so they can never talk to the real GitHub API
+
+Fixes:
+
+- Error message of a failing `npx howfat` run included stdout twice instead of stderr
+- A measurement error (`summary: error`) set a green `success` commit status without description; it now sets an `error` status with a description
+- Fractional percentage limits such as `0.5%` were truncated to integers
+- A `GITHUB_API_URL` with a trailing slash (as previously shown in the README) resulted in invalid `//repos/...` API urls
+
+## 1.4.2
+
+Fixes:
+
+- [#143](https://github.com/adobe/sizewatcher/pull/143) Handle empty or comments-only `.sizewatcher.yml` config file gracefully after js-yaml 5 upgrade
+- [#150](https://github.com/adobe/sizewatcher/pull/150) Fix tests on Node 26.8+ by replacing mock-fs with real temp directories
+
+Improvements:
+
+- [#143](https://github.com/adobe/sizewatcher/pull/143) Upgrade js-yaml to v5.4.1 (major version, includes security fixes)
+- [#139](https://github.com/adobe/sizewatcher/pull/139) [#140](https://github.com/adobe/sizewatcher/pull/140) Upgrade tmp to v0.2.7 (security fixes)
+- [#151](https://github.com/adobe/sizewatcher/pull/151) CI: update CircleCI config to version 2.1, README example uses `cimg/node:lts` image
+- [#152](https://github.com/adobe/sizewatcher/pull/152) Set `root: true` in ESLint config
+- CI: update GitHub actions to v7, disable fail-fast on node version matrix
+- Renovate: keep mocha 11 and nyc 17 to retain Node 18 support
+- Various dev dependency updates
+
+## 1.4.1
+
+Fixes:
+
+- [#136](https://github.com/adobe/sizewatcher/pull/136) [#116](https://github.com/adobe/sizewatcher/issues/116) npm_package: use `npm pack` instead of `npm publish --dry-run`
+
+Improvements:
+
+- [#123](https://github.com/adobe/sizewatcher/pull/123) Update tmp to v0.2.4 (security fix)
+- [#133](https://github.com/adobe/sizewatcher/pull/133) Update js-yaml to v4.1.1 (security fix)
+- [#128](https://github.com/adobe/sizewatcher/pull/128) Update debug to v4.4.3
+- [#130](https://github.com/adobe/sizewatcher/pull/130) Renovate: ignore whatwg-url from package.json overrides
+- [#134](https://github.com/adobe/sizewatcher/pull/134) Update mocha to v11.7.5
+
 ## 1.4.0
 
 Major changes:

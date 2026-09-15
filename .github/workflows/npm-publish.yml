@@ -8,15 +8,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       # Setup .npmrc file to publish to npm
       # See https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
       - run: npm ci
       - run: npm test
+      - run: npm run lint
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
