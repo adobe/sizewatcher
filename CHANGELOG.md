@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+Fixes:
+
+- CI: grant `statuses: write` to the `GITHUB_TOKEN` so the workflow can set commit statuses when `report.githubStatus` is enabled (was failing with `Resource not accessible by integration`)
+- README: document the `GITHUB_TOKEN` permissions required for Github Actions (`pull-requests: write`, `statuses: write`)
+
+## 1.5.0
+
 Major changes:
 
 - Working on sizewatcher requires Node.js LTS (20.19+) now, as eslint 10 and c8 do not support Node.js 18 anymore. Runtime support for Node.js 18+ is unchanged and verified in CI with only the runtime dependencies installed.
