@@ -251,7 +251,7 @@ This token should be a service/bot user that has read/pull permission on the rep
 If you use Github Enterprise, set the custom [Github API URL](https://docs.github.com/en/enterprise-server@2.21/rest/reference/enterprise-admin) in the `GITHUB_API_URL` environment variable:
 
 ```
-GITHUB_API_URL=https://mygithub.company.com/api/v3/
+GITHUB_API_URL=https://mygithub.company.com/api/v3
 ```
 
 This is not required for public github.com.

@@ -53,10 +53,12 @@ function cleanEnvVars() {
     delete process.env.GITHUB_BASE_REF;
     delete process.env.GITHUB_HEAD_REF;
     delete process.env.TRAVIS;
+    delete process.env.TRAVIS_PULL_REQUEST;
     delete process.env.TRAVIS_PULL_REQUEST_BRANCH;
     delete process.env.TRAVIS_BRANCH;
     delete process.env.CIRCLECI;
     delete process.env.CIRCLE_BRANCH;
+    delete process.env.CIRCLE_PULL_REQUEST;
 }
 
 // clones are local and fast, but node:test has no default timeout
@@ -85,6 +87,23 @@ describe("checkout", function() {
         process.env.CI = "true";
         process.env.TRAVIS = true;
         await run("test/checkout/travis");
+    }));
+
+    it("handles travis pull request builds", TIMEOUT, captured(async () => {
+        process.env.CI = "true";
+        process.env.TRAVIS = true;
+        process.env.TRAVIS_PULL_REQUEST = "1";
+        process.env.TRAVIS_BRANCH = "main";
+        process.env.TRAVIS_PULL_REQUEST_BRANCH = "branch";
+        await run("test/checkout/normal");
+    }));
+
+    it("handles travis branch builds", TIMEOUT, captured(async () => {
+        process.env.CI = "true";
+        process.env.TRAVIS = true;
+        process.env.TRAVIS_PULL_REQUEST = "false";
+        process.env.TRAVIS_BRANCH = "branch";
+        await run("test/checkout/normal");
     }));
 
     it("handles circleci checkouts", TIMEOUT, captured(async () => {
