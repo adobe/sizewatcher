@@ -268,6 +268,7 @@ For [Github Actions](https://github.com/features/actions) you need to
 - ensure Node.js is installed using `actions/setup-node`
 - run `npx @adobe/sizewatcher`
 - set a `GITHUB_TOKEN` which can leverage the built-in `secrets.GITHUB_TOKEN` (no need to create the token yourself!)
+- if your workflow or repository restricts the [`GITHUB_TOKEN` permissions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication#permissions-for-the-github_token), grant `pull-requests: write` (PR comments) and, when `report.githubStatus` is enabled, `statuses: write` (commit statuses). Note that once a `permissions` block is declared, all scopes not listed are set to `none`.
 
 Example [workflow yaml](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions) snippet (`.github/workflows/*.yml`):
 
@@ -275,6 +276,12 @@ Example [workflow yaml](https://docs.github.com/en/free-pro-team@latest/actions/
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+      # only needed with report.githubStatus: true
+      statuses: write
 
     steps:
     - uses: actions/checkout@v4
