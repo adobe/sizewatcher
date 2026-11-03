@@ -8,6 +8,8 @@ Improvements:
 
 Fixes:
 
+- Checkout failed with `Invalid cross-device link` when the temp directory and the repository are on different filesystems (e.g. tmpfs `/tmp` on some Ubuntu 26.04 Github Actions runners). Local clones now fall back to copying when hardlinks aren't possible
+
 - CI: grant `statuses: write` to the `GITHUB_TOKEN` so the workflow can set commit statuses when `report.githubStatus` is enabled (was failing with `Resource not accessible by integration`)
 - README: document the `GITHUB_TOKEN` permissions required for Github Actions (`pull-requests: write`, `statuses: write`)
 
