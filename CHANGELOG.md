@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+Improvements:
+
+- Security: update `simple-git` to 4.0.1, fixing advisories GHSA-858h-whjf-mvg5, GHSA-g4wm-2vf7-vfgr and GHSA-x6jw-m9v5-85vh. Sizewatcher was not exploitable through these, since it never passes untrusted options or config to `simple-git`
+
 Fixes:
 
 - CI: grant `statuses: write` to the `GITHUB_TOKEN` so the workflow can set commit statuses when `report.githubStatus` is enabled (was failing with `Resource not accessible by integration`)
