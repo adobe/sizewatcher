@@ -691,7 +691,7 @@ How to create a new release of version `1.4` (as example):
 3. Run `npm publish --dry-run` to ensure all looks good
 4. Commit straight to `main` like [here](https://github.com/adobe/sizewatcher/commit/4da848b6cc52a38f98203760f8f74e44a0ec77cd)
 5. Create a new draft [release in Github](https://github.com/adobe/sizewatcher/releases)
-   1. Nmae the release `1.4`
+   1. Name the release `1.4`
    2. Add release notes with new features, improvements, fixes
    3. Ensure github creates a tag `v1.4`
 6. Save draft and check things look good
