@@ -19,7 +19,7 @@ const path = require("path");
 const tmp = require("tmp");
 tmp.setGracefulCleanup();
 
-const { getFileSize, getFolderRegex } = require("../lib/size");
+const { getFileSize, getFolderRegex, formatIecSize } = require("../lib/size");
 
 describe("size", function() {
 
@@ -87,6 +87,22 @@ describe("size", function() {
             assert.ok(regex.test("/tmp/build (1)+v1.0/[out]/file"));
             assert.ok(!regex.test("/tmp/build 1+v1x0/out"));
             assert.ok(!regex.test("/tmp/build (1)+v1.0/o"));
+        });
+    });
+
+    describe("formatIecSize", function() {
+
+        it("formats like numfmt --to=iec-i --suffix=B --padding=7 --round=nearest", function() {
+            assert.strictEqual(formatIecSize(0), "     0B");
+            assert.strictEqual(formatIecSize(14), "    14B");
+            assert.strictEqual(formatIecSize(1023), "  1023B");
+            assert.strictEqual(formatIecSize(1024), " 1.0KiB");
+            assert.strictEqual(formatIecSize(1536), " 1.5KiB");
+            assert.strictEqual(formatIecSize(10188), " 9.9KiB");
+            assert.strictEqual(formatIecSize(10239), "  10KiB");
+            assert.strictEqual(formatIecSize(15 * 1024 * 1024), "  15MiB");
+            assert.strictEqual(formatIecSize(1048575), " 1.0MiB");
+            assert.strictEqual(formatIecSize(3 * 1024 ** 3), " 3.0GiB");
         });
     });
 });
