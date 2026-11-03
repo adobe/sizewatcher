@@ -4,8 +4,8 @@
       ":semanticCommits",
       ":pinDependencies"
     ],
-    "baseBranches": [
-      "main"
+    "baseBranchPatterns": [
+        "main"
     ],
     "timezone": "America/Los_Angeles",
     "branchPrefix": "renovate-",
