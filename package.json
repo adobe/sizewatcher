@@ -42,7 +42,7 @@
     "debug": "4.4.3",
     "deepmerge": "4.3.1",
     "get-folder-size": "5.0.0",
-    "glob": "14.0.2",
+    "glob": "14.0.3",
     "js-yaml": "5.5.0",
     "pretty-bytes": "5.6.0",
     "require-dir": "1.2.0",
