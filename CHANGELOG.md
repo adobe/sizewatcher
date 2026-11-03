@@ -8,8 +8,8 @@ Improvements:
 
 Fixes:
 
+- Security: crafted branch names (e.g. a PR branch passed in via `GITHUB_HEAD_REF`) could run shell commands, because sizewatcher ran some git commands through a shell (the `git fetch` during checkout and the "largest files among new changes" listing of the git comparator). Git is now invoked directly, without a shell
 - Checkout failed with `Invalid cross-device link` when the temp directory and the repository are on different filesystems (e.g. tmpfs `/tmp` on some Ubuntu 26.04 Github Actions runners). Local clones now fall back to copying when hardlinks aren't possible
-
 - CI: grant `statuses: write` to the `GITHUB_TOKEN` so the workflow can set commit statuses when `report.githubStatus` is enabled (was failing with `Resource not accessible by integration`)
 - README: document the `GITHUB_TOKEN` permissions required for Github Actions (`pull-requests: write`, `statuses: write`)
 
