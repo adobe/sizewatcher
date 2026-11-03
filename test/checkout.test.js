@@ -16,7 +16,7 @@ const gitCheckoutBeforeAndAfter = require("../lib/checkout");
 const path = require("path");
 const fs = require("fs");
 const assert = require("assert");
-const Git = require("simple-git");
+const { simpleGit: Git } = require("simple-git");
 const { describe, it, beforeEach, afterEach } = require("node:test");
 const { captured, exec } = require("./capture-console");
 
