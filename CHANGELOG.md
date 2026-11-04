@@ -1,15 +1,18 @@
 # Changelog
 
-## Unreleased
+## 1.5.1
 
 Improvements:
 
-- Security: update `simple-git` to 4.0.1, fixing advisories GHSA-858h-whjf-mvg5, GHSA-g4wm-2vf7-vfgr and GHSA-x6jw-m9v5-85vh. Sizewatcher was not exploitable through these, since it never passes untrusted options or config to `simple-git`
+- Security: update `simple-git` to 4.0.1 (now 4.0.2), fixing advisories GHSA-858h-whjf-mvg5, GHSA-g4wm-2vf7-vfgr and GHSA-x6jw-m9v5-85vh. Sizewatcher was not exploitable through these, since it never passes untrusted options or config to `simple-git`
+- Security: update `glob` to 14 (14.0.3)
+- Update `js-yaml` to 5.4.3 and other minor/patch dependencies
 
 Fixes:
 
 - Security: crafted branch names (e.g. a PR branch passed in via `GITHUB_HEAD_REF`) could run shell commands, because sizewatcher ran some git commands through a shell (the `git fetch` during checkout and the "largest files among new changes" listing of the git comparator). Git is now invoked directly, without a shell
 - Checkout failed with `Invalid cross-device link` when the temp directory and the repository are on different filesystems (e.g. tmpfs `/tmp` on some Ubuntu 26.04 Github Actions runners). Local clones now fall back to copying when hardlinks aren't possible
+- Git comparator failed with `numfmt: invalid suffix in input` on Ubuntu 26.04 (uutils coreutils) when listing the largest files. Sizes are now sorted and formatted in JS instead of relying on coreutils
 - CI: grant `statuses: write` to the `GITHUB_TOKEN` so the workflow can set commit statuses when `report.githubStatus` is enabled (was failing with `Resource not accessible by integration`)
 - README: document the `GITHUB_TOKEN` permissions required for Github Actions (`pull-requests: write`, `statuses: write`)
 
