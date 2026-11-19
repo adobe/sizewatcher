@@ -1,0 +1,7 @@
+# FOR TESTING ONLY
+
+report:
+  githubStatus: true
+
+limits:
+  fail: 400KB
